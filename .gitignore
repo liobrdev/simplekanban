@@ -19,7 +19,6 @@ frontend/npm-debug.log*
 
 # nginx
 nginx/etc/nginx/conf.d/*.conf
-!nginx/etc/nginx/conf.d/default.conf
 
 # misc
 *.pem
