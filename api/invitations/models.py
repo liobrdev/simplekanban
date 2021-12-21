@@ -1,4 +1,3 @@
-from django.db import IntegrityError
 from django.db.models import (
     Model, CharField, DateTimeField, EmailField,
     ForeignKey, Manager, UniqueConstraint, CASCADE,
@@ -10,8 +9,6 @@ from knox import crypto
 from knox.settings import CONSTANTS
 
 from boards.models import Board
-from boards.exceptions import BoardIsFull, NewMembersNotAllowed
-from invitations.exceptions import InvitedAlreadyMember
 from utils.models import CustomBaseMixin
 
 
