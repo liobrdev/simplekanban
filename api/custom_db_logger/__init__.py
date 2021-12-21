@@ -1,0 +1,1 @@
+default_app_config='custom_db_logger.apps.DbLoggerAppConfig'

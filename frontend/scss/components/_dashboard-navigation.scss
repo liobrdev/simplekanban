@@ -1,0 +1,66 @@
+.DashboardNavigation {
+  z-index: 3;
+  position: fixed;
+  top: 6px;
+  left: 12px;
+  height: 0%;
+  width: 0%;
+
+  &-overlay {
+    position: absolute;
+    z-index: 4;
+    background: black;
+    opacity: 0.333;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+  
+  &.is-on {
+    z-index: 5;
+    background-color: $red;
+    top: unset;
+    left: unset;
+    height: 50vh;
+    width: 67vw;
+    min-width: 100px;
+    max-width: 400px;
+    border-bottom-right-radius: 100%;
+
+    .DashboardNavigation-buttons {
+      margin-top: 7.5vh;
+      padding-left: 12.5%;
+
+      li {
+        margin-bottom: 20px;
+
+        .DashboardNavigation-button {
+          all: unset;
+          cursor: pointer;
+          text-transform: uppercase;
+          color: white;
+
+          &:focus {
+            outline: white dotted 1px;
+          }
+        }
+      }
+    }
+
+    .MenuIcon-container {
+      position: relative;
+      top: 6px;
+      left: calc(100% - 50px);
+
+      @include for-medium-window-up {
+        left: calc(100% - 40px);
+      }
+    }
+
+    @include for-short-window-only {
+      height: 100vh;
+      border-bottom-right-radius: unset;
+    }
+  }
+}

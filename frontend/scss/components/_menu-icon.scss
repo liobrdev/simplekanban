@@ -1,0 +1,108 @@
+$height-icon: 16px;
+$width-line: 24px;
+$height-line: 2px;
+
+$transition-time: 0.25s;
+$rotation: 45deg;
+$translateY: 8px;
+$translateX: 0;
+
+
+.MenuIcon {
+  all: unset;
+  cursor: pointer;
+  width: $width-line + 6px;
+  height: $width-line + 6px;
+
+  &:focus {
+    outline: $red dotted 1px;
+  }
+
+  &:hover,
+  &:focus {
+    .MenuIcon-icon {
+      .MenuIcon-icon-line--line1 {
+        -webkit-transform: translateY($height-line * -1.5);
+            -moz-transform: translateY($height-line * -1.5);
+            -ms-transform: translateY($height-line * -1.5);
+              -o-transform: translateY($height-line * -1.5);
+                transform: translateY($height-line * -1.5);
+      }
+      .MenuIcon-icon-line--line3 {
+        -webkit-transform: translateY($height-line * 1.5);
+            -moz-transform: translateY($height-line * 1.5);
+            -ms-transform: translateY($height-line * 1.5);
+              -o-transform: translateY($height-line * 1.5);
+                transform: translateY($height-line * 1.5);
+      }
+    }
+  }
+  
+  &-icon {
+    position: relative;
+    width: $width-line;
+    height: $height-icon;
+    margin-left: auto;
+    margin-right: auto;
+    
+    &-line {
+      display: block;
+      background-color: $red;
+      width: $width-line;
+      height: $height-line;
+      position: absolute;
+      left: 0;
+      border-radius: 3px;
+      -webkit-transition: all $transition-time;
+         -moz-transition: all $transition-time;
+           -o-transition: all $transition-time;
+              transition: all $transition-time;
+      
+      &--line1 {
+        top: 0;
+      }
+      &--line2 {
+        top: 50%;
+      }
+      &--line3 {
+        top: calc(100% - 1px);
+      }
+    }
+  }
+    
+  &.is-active {
+    &:focus {
+      outline: white dotted 1px;
+    }
+
+    &:hover,
+    &:focus, & {
+      .MenuIcon-icon {
+        &-line {
+          background-color: white;
+          
+          &--line1 {
+            -webkit-transform: translateY($translateY) translateX($translateX) rotate($rotation);
+               -moz-transform: translateY($translateY) translateX($translateX) rotate($rotation);
+                -ms-transform: translateY($translateY) translateX($translateX) rotate($rotation);
+                 -o-transform: translateY($translateY) translateX($translateX) rotate($rotation);
+                    transform: translateY($translateY) translateX($translateX) rotate($rotation);
+          }
+  
+          &--line2 {
+            opacity: 0;
+          }
+  
+          &--line3 {
+            top: 100%;
+            -webkit-transform: translateY($translateY * -1) translateX($translateX) rotate($rotation * -1);
+               -moz-transform: translateY($translateY * -1) translateX($translateX) rotate($rotation * -1);
+                -ms-transform: translateY($translateY * -1) translateX($translateX) rotate($rotation * -1);
+                 -o-transform: translateY($translateY * -1) translateX($translateX) rotate($rotation * -1);
+                    transform: translateY($translateY * -1) translateX($translateX) rotate($rotation * -1);
+          }
+        }
+      }
+    }
+  }
+}

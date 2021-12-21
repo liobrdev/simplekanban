@@ -1,0 +1,65 @@
+// Quicksand
+@font-face {
+  font-family: "Quicksand";
+  src: url("../fonts/quicksand/static/Quicksand-Light.ttf") format("truetype");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../fonts/quicksand/static/Quicksand-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../fonts/quicksand/static/Quicksand-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../fonts/quicksand/static/Quicksand-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Quicksand";
+  src: url("../fonts/quicksand/static/Quicksand-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+// Roboto Condensed
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url("../fonts/roboto_condensed/RobotoCondensed-Light.ttf") format("truetype");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url("../fonts/roboto_condensed/RobotoCondensed-LightItalic.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url("../fonts/roboto_condensed/RobotoCondensed-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url("../fonts/roboto_condensed/RobotoCondensed-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url("../fonts/roboto_condensed/RobotoCondensed-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url("../fonts/roboto_condensed/RobotoCondensed-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+// Font variables
+$fontPrimary: Roboto Condensed, Helvetica, Arial, sans-serif;
+$fontSecondary: Quicksand, Helvetica, Arial, sans-serif;

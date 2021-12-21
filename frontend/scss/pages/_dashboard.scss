@@ -1,0 +1,40 @@
+.Page--dashboard {
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: initial;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 5px solid transparent;
+    border-radius: 100px;
+    background-color: $red;
+    background-clip: content-box;
+  }
+
+  scrollbar-color: $red white;
+
+  &.is-menuOn, &.is-formOn {
+    overflow: hidden;
+  }
+
+  .DashboardHeading {
+    z-index: 1;
+    position: absolute;
+    top: 10px;
+    left: calc(5% + 50px);
+    text-transform: uppercase;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: $red;
+  }
+
+  .Footer {
+    height: 80px;
+  }
+}

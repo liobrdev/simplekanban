@@ -1,0 +1,233 @@
+.BoardTask {
+  position: relative;
+  width: calc(100% - 20px);
+  min-height: 42px;
+  margin: 0 auto;
+  background-color: #334;
+  border-radius: 5px;
+  box-shadow: 0 6px 6px 0 rgba(0, 0, 0, 0.3);
+
+  @include for-tall-window-up {
+    min-height: 88px;
+  }
+
+  .BoardTaskTopPanel {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .BoardTaskText {
+    position: relative;
+    float: left;
+    top: 10px;
+    left: 10px;
+    width: calc(100% - 40px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+    
+    &-text {
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: $fontSecondary;
+      line-height: 17px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px rgba(0,0,0,0.1);
+      position: relative;
+      display: inline;
+      white-space: nowrap;
+      padding-right: 13px;
+    }
+
+    &-form {
+      &-input {
+        height: 22px;
+
+        input {
+          position: relative;
+          width: calc(100% - 5px);
+          height: 100%;
+          font-family: $fontSecondary;
+          font-weight: 600;
+          letter-spacing: 1px;
+          border: none;
+          outline: none;
+          background: white;
+          border-radius: 3px;
+          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+          color: black;
+        }
+      }
+    }
+
+    @include for-tall-window-up {
+      text-overflow: unset;
+
+      .BoardTaskText-text {
+        display: block;
+        white-space: unset;
+        max-height: 51px;
+
+        &::before {
+          position: absolute;
+          content: "...";
+          inset-block-end: 0; /* "bottom" */
+          inset-inline-end: 0; /* "right" */
+        }
+  
+        &::after {
+          content: "";
+          position: absolute;
+          inset-inline-end: 0; /* "right" */
+          width: 1em;
+          height: 1em;
+          background: #334;
+        }
+      }
+    }
+  }
+
+  .MenuIcon-container {
+    position: relative;
+    float: right;
+    top: 6px;
+    right: 10px;
+
+    .MenuIcon {
+      height: 24px;
+      width: 18px;
+
+      &:focus {
+        outline: white dotted 1px;
+      }
+    
+      &:hover,
+      &:focus {
+        .MenuIcon-icon {
+          .MenuIcon-icon-line--line1 {
+            -webkit-transform: unset;
+               -moz-transform: unset;
+                -ms-transform: unset;
+                 -o-transform: unset;
+                    transform: unset;
+          }
+          .MenuIcon-icon-line--line3 {
+            -webkit-transform: unset;
+               -moz-transform: unset;
+                -ms-transform: unset;
+                 -o-transform: unset;
+                    transform: unset;
+          }
+        }
+      }
+
+      &-icon {
+        width: 4px;
+        height: 15px;
+
+        &-line {
+          background-color: white;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          left: unset;
+          right: 0;
+        }
+      }
+
+      &.is-active {
+        .MenuIcon-icon {
+          width: 18px;
+          height: 18px;
+
+          &-line {
+            background-color: white;
+            width: 18px;
+            height: 2px;
+            border-radius: 3px;
+            left: 0;
+            right: unset;
+          }
+        }
+        
+        &:hover,
+        &:focus, & {
+          .MenuIcon-icon {
+            &-line {                
+              &--line1 {
+                -webkit-transform: translateY(8px) translateX(0) rotate(45deg);
+                   -moz-transform: translateY(8px) translateX(0) rotate(45deg);
+                    -ms-transform: translateY(8px) translateX(0) rotate(45deg);
+                     -o-transform: translateY(8px) translateX(0) rotate(45deg);
+                        transform: translateY(8px) translateX(0) rotate(45deg);
+              }
+      
+              &--line2 {
+                opacity: 0;
+              }
+      
+              &--line3 {
+                top: 100%;
+                -webkit-transform: translateY(-10px) translateX(0) rotate(-45deg);
+                   -moz-transform: translateY(-10px) translateX(0) rotate(-45deg);
+                    -ms-transform: translateY(-10px) translateX(0) rotate(-45deg);
+                     -o-transform: translateY(-10px) translateX(0) rotate(-45deg);
+                        transform: translateY(-10px) translateX(0) rotate(-45deg);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .BoardTaskButtons {
+    position: relative;
+    width: 100%;
+    min-height: 42px;
+    display: flex;
+    text-align: justify;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+    .BoardTaskButton {
+      display: inline-block;
+      position: relative;
+      width: 30px;
+      height: 30px;
+
+      .LeftArrowIcon, .RightArrowIcon {
+        background: unset;
+        box-shadow: none;
+
+        &:focus {
+          & > div {
+            outline: none;
+          }
+        }
+      }
+
+      button {
+        & > div {
+          background: unset;
+          border-radius: 50%;
+          box-shadow: 0 6px 14px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        &:hover,
+        &:focus {
+          -webkit-transform: none;
+             -moz-transform: none;
+              -ms-transform: none;
+               -o-transform: none;
+                  transform: none;
+
+          & > div {
+            background: $blue;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+.DashboardListBoards {
+  padding-top: 50px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  &-list {
+    padding-left: 0;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+
+    &-item {
+      display: inline-block;
+      width: 100%;
+      height: 50vw;
+      margin-top: 20px;
+      margin-bottom: 20px;
+
+      @include for-big-phone-up {
+        width: 50%;
+        height: 25vw;
+      }
+
+      @include for-tablet-portrait-up {
+        max-height: 175px;
+      }
+
+      @include for-desktop-up {
+        @include for-medium-window-up {
+          max-height: 250px;
+        }
+      }
+    }
+
+    @include for-short-window-only {
+      width: 70%;
+    }
+
+    @include for-tablet-portrait-up {
+      width: 80%;
+    }
+
+    @include for-tablet-landscape-up {
+      width: 70%;
+    }
+  }
+  
+  &.is-empty {
+    &::before {
+      content: "";
+      z-index: -1;
+      background: url("/board_1.png") no-repeat center;
+      background-size: 166px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 67%;
+    }
+
+    .DashboardListBoards-message {
+      max-width: 275px;
+      float: right;
+      color: $red;
+      letter-spacing: 2px;
+      font-size: 16px;
+      font-family: $fontSecondary;
+      font-weight: 500;
+      padding-left: 5%;
+      padding-right: 5%;
+
+      @include for-tablet-portrait-up {
+        max-width: 500px;
+        padding-right: 10%;
+      }
+    }
+  }
+
+  @include for-medium-window-up {
+    padding-top: 75px;
+  }
+}

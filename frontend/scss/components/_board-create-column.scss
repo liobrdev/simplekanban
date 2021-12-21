@@ -1,0 +1,201 @@
+.BoardCreateColumn {
+  width: calc(60vw - 10px);
+  min-width: 175px;
+  max-width: 225px;
+  height: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  .PlusIcon {
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0px 2px 6px 3px $lightred;
+    box-shadow: 0px 2px 6px 3px #d42e2e22;
+    width: 100%;
+    height: 100%;
+
+    &::before {
+      content: ". . .";
+      z-index: 1;
+      position: absolute;
+      display: block;
+      width: 100%;
+      height: 1px;
+      color: $lightred;
+      font-size: 28px;
+      bottom: 40px;
+      text-align: center;
+      opacity: 0.5;
+    }
+
+    &-circle {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto;
+      background-color: $lightred;
+      font-family: $fontSecondary;
+      line-height: inherit;
+      -webkit-transition: unset;
+         -moz-transition: unset;
+           -o-transition: unset;
+              transition: unset;
+    }
+
+    &:focus,
+    &:hover {
+      background-color: unset;
+      box-shadow: 0px 2px 8px 3px $lightred;
+      box-shadow: 0px 2px 8px 3px #d42e2e66;
+
+      .PlusIcon-circle {
+        background-color: $red;
+        box-shadow: unset;
+        -webkit-transform: unset;
+           -moz-transform: unset;
+            -ms-transform: unset;
+             -o-transform: unset;
+                transform: unset;
+      }
+    }
+  }
+
+  &-form {
+    width: calc(100% - 20px);
+    padding-top: 10px;
+    margin: 0 auto;
+    height: 200px;
+    color: white;
+    font-family: $fontSecondary;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    .CloseIcon-container {
+      width: 36px;
+      height: 36px;
+      position: absolute;
+      top: 9px;
+      right: 10px;
+
+      .CloseIcon {
+        &:focus,
+        &:hover {
+          .CloseIcon-icon {
+            &::before,
+            &::after {
+              box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+            }
+          }
+        }
+      }
+    }
+
+    &-input {
+      position: relative;
+
+      label {
+        float: left;
+        padding-top: 3px;
+        text-shadow: 1px 1px rgba(0,0,0,0.1);
+      }
+      
+      &--title {
+        z-index: 2;
+        width: calc(100% - 26px);
+        position: relative;
+        height: 36px;
+        font-size: unset;
+        line-height: 36px;
+        margin-bottom: 20px;
+
+        input {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          font-family: $fontSecondary;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          border: none;
+          outline: none;
+          background: white;
+          border-radius: 3px;
+          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+          color: black;
+          padding-left: 5px;
+        }
+      }
+
+      &--wipLimitOn {
+        min-height: 36px;
+
+        .SliderCheckbox {
+          float: right;
+        }
+      }
+
+      &--wipLimit {
+        min-height: 44px;
+
+        input {
+          float: right;
+          width: 50px;
+          outline: none;
+          border: unset;
+          border-radius: 3px;
+          padding: 4px;
+
+          &:focus {
+            border: 2px solid $gold;
+          }
+        }
+      }
+    }
+
+    &-icons {        
+      .CheckIcon-container {
+        width: 36px;
+        height: 36px;
+        position: relative;
+        margin: 0 auto;
+
+        .CheckIcon {
+          &:focus {
+            outline: unset;
+          }
+
+          &-image-container {
+            background: $darkred;
+            border-radius: 50%;
+          }
+
+          &:hover,
+          &:focus {
+            .CheckIcon-image-container {
+              background: $lightgreen;
+              box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+            }
+          }
+        }
+      }
+    }
+
+    &::after {
+      content: ". . .";
+      position: relative;
+      display: block;
+      height: 1px;
+      color: $darkred;
+      font-size: 28px;
+      margin: 0 auto;
+      opacity: 0.5;
+      text-align: center;
+    }
+  }
+
+  &.is-on {
+    background: $red;
+    border-radius: 6px;
+    box-shadow: 1px 1px 1px 1px #d42e2e33;
+  }
+}

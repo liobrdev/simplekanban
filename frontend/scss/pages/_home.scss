@@ -1,0 +1,87 @@
+.Page--home {
+  h1 {
+    color: $red;
+    margin-top: 60px;
+    font-family: $fontSecondary;
+    font-size: calc(1vw + 21px);
+    font-size: 35px;
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  h2 {
+    text-align: center;
+    margin-top: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60vw;
+    max-width: 267px;
+    font-family: $fontSecondary;
+    font-weight: 600;
+  }
+
+  .HomeLinks {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 60px;
+    width: 75%;
+
+    .HomeLink {
+      display: inline-block;
+      border: none;
+      outline: none;
+      min-width: 175px;
+      position: relative;
+      background-color: $red;
+      box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2);
+      text-transform: uppercase;
+      -webkit-transition: all 0.1s linear;
+        -moz-transition: all 0.1s linear;
+          -o-transition: all 0.1s linear;
+              transition: all 0.1s linear;
+      padding: 0.5em 1.2em;
+      margin: 0.3em;
+      border-radius: 0.2em;
+      text-decoration: none;
+      color: #FFFFFF;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-family: $fontSecondary;
+      
+      &:hover,
+      &:focus {
+        cursor: pointer;
+        background-color: $blue;
+        letter-spacing: 0px;
+        font-weight: 600;
+        text-shadow: 2px 2px rgba(0,0,0,0.2);
+      }
+
+      &:first-of-type {
+        &:hover,
+        &:focus {
+          background-color: $lightgreen;
+        }
+      }
+    }
+  }
+
+  .Footer {
+    height: 200px;
+  }
+
+  @include for-tablet-portrait-up {
+    h1 {
+      margin-left: 6%;
+      margin-top: 3%;
+      text-align: unset;
+      font-size: 50px;
+    }
+
+    h2 {
+      margin-top: 120px;
+    }
+  }
+}

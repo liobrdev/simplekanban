@@ -1,0 +1,56 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7 {
+  font-weight: normal;
+  margin-top: 0;
+}
+
+*,
+::after,
+::before {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  &::-webkit-scrollbar {
+    width: initial;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 5px solid transparent;
+    border-radius: 100px;
+    background-color: $red;
+    background-clip: content-box;
+  }
+
+  scrollbar-color: $red white;
+}
+
+body {
+  margin: auto;
+  font-family: $fontPrimary;
+}
+
+.SiteContainer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}

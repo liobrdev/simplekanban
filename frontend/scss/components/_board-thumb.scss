@@ -1,0 +1,110 @@
+.BoardThumb {
+  color: $red;
+  display: block;
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+  -webkit-transition: all 0.1s linear;
+     -moz-transition: all 0.1s linear;
+       -o-transition: all 0.1s linear;
+          transition: all 0.1s linear;
+
+  &-box {
+    z-index: 1;
+    position: relative;
+    height: 90%;
+    top: 5%;
+    background-color: white;
+    box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 4px;
+    -webkit-transition: all 0.1s linear;
+       -moz-transition: all 0.1s linear;
+         -o-transition: all 0.1s linear;
+            transition: all 0.1s linear;
+
+    &-text {
+      z-index: 2;
+      position: absolute;
+      bottom: 0;
+      width: 92.5%;
+      height: 30%;
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 1%;
+      padding-bottom: 5%;
+      font-family: $fontSecondary;
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 1px;
+      -webkit-transition: all 0.1s linear;
+         -moz-transition: all 0.1s linear;
+           -o-transition: all 0.1s linear;
+              transition: all 0.1s linear;
+
+      &-outer {
+        position: relative;
+
+        &-inner {
+          position: relative;
+          white-space: nowrap;
+          padding-left: 0.3em;
+          margin-bottom: 0;
+        }
+      }
+
+      @include for-tablet-portrait-up {
+        height: 25%;
+        font-size: 16px;
+      }
+
+      @include for-tablet-landscape-up {
+        @include for-medium-window-up {
+          height: 22%;
+        }
+      }
+
+    }
+  }
+
+  &:hover,
+  &:focus {
+    color: white;
+
+    .BoardThumb-box {
+      background-color: $red;
+      box-shadow: 0 6px 12px 0 rgba(223, 46, 46, 0.5);
+
+      &-text {
+        letter-spacing: 1px;
+        font-size: 16px;
+        text-overflow: unset;
+
+        @include for-tablet-portrait-up {
+          font-size: 20px;
+        }
+      }
+    }
+
+    &.is-overflowing {
+      .BoardThumb-box {
+        &-text {
+          &-outer {
+            position: absolute;
+            animation-iteration-count: infinite;
+            animation-name: offsetRight;
+            animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+
+            &-inner {
+              animation-iteration-count: infinite;
+              animation-name: offsetLeft;
+              animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+            }
+          }
+        }
+      }
+    }
+  }
+}

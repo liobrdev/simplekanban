@@ -1,0 +1,50 @@
+.Page--board {
+  min-height: unset;
+  height: 100vh;
+  overflow: hidden;
+
+  .LeftArrowIcon-container {
+    z-index: 3;
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+
+    .LeftArrowIcon {
+      box-shadow: unset;
+    }
+
+    &.is-hidden {
+      top: unset;
+      left: unset;
+      width: unset;
+      height: unset;
+
+      .LeftArrowIcon {
+        display: none;
+      }
+    }
+  }
+
+  @include for-tablet-portrait-up {
+    .LeftArrowIcon-container {
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+    }
+
+    .BoardTitle-button-text {
+      height: 50px;
+
+      &-outer {
+        line-height: 50px;
+
+        &-inner {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}

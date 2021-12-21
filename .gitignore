@@ -1,0 +1,29 @@
+# api
+__pycache__/
+*.py[cod]
+api/.env
+api/secrets
+
+# certbot
+certbot/etc/letsencrypt/renewal-hooks
+
+# db
+db_default/var/lib/postgresql/data
+db_logger/var/lib/postgresql/data
+
+# frontend
+frontend/.env.local
+frontend/.next
+frontend/node_modules
+frontend/npm-debug.log*
+
+# nginx
+nginx/etc/nginx/conf.d/*.conf
+!nginx/etc/nginx/conf.d/default.conf
+
+# misc
+*.pem
+/*.env
+/.vscode
+/secrets
+todo.txt

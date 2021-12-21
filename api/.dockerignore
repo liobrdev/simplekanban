@@ -1,0 +1,6 @@
+.dockerignore
+Dockerfile
+*.pyc
+__pycache__
+.env
+*/secrets
