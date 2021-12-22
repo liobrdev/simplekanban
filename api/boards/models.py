@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import (
     AutoField, BooleanField, CharField, PositiveSmallIntegerField, SlugField,
     ForeignKey, ManyToManyField, CASCADE, PROTECT, Index, UniqueConstraint, Q,)
+from rest_framework.reverse import reverse
 
 from boards.exceptions import BoardIsFull, NewMembersNotAllowed
 from boards.utils import BoardRoles
