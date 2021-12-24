@@ -1,7 +1,9 @@
 import logging
 
+from datetime import timedelta
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.signals import user_logged_out
+from django.utils import timezone
 
 from knox.settings import CONSTANTS, knox_settings
 from knox.views import LoginView, LogoutView
@@ -11,8 +13,15 @@ from rest_framework.exceptions import (
     AuthenticationFailed, PermissionDenied, Throttled, ValidationError,)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from authentication.serializers import LoginSerializer, RegistrationSerializer
+from authentication.models import ResetPasswordToken
+from authentication.reset_password import send_reset_password_email
+from authentication.serializers import (
+    LoginSerializer,
+    RegistrationSerializer,
+    ResetPasswordRequestSerializer,
+    ResetPasswordProceedSerializer,)
 from authentication.utils import AuthCommands
 from users.exceptions import DuplicateEmail, DuplicateSuperUser
 from utils import parse_request_metadata
@@ -148,3 +157,49 @@ class LogoutAPI(LogoutView):
             })
         finally:
             return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+
+class ResetPasswordRequestAPI(APIView):
+    def post(self, request, format=None):
+        serializer = ResetPasswordRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data
+
+        if not email:
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+        try:
+            token = ResetPasswordToken.objects.get(
+                email=email,
+                expiry__gt=timezone.now(),
+            )
+        except ResetPasswordToken.DoesNotExist:
+            try:
+                token = ResetPasswordToken.objects.create(
+                    email=email,
+                    expiry=timedelta(hours=1),
+                )
+            except Exception as e:
+                logger.exception('Create reset token failed.', exc_info=e, extra={
+                    'client_ip': request.META['CLIENT_IP'],
+                    'command': AuthCommands.RESET_PW_REQUEST,
+                    'metadata': parse_request_metadata(request),
+                })
+                raise RequestError()
+
+            user_agent = request.user_agent
+            device_name = user_agent.device.family
+            browser_name = (
+                f'{user_agent.browser.family} '
+                f'{user_agent.browser.version_string}'
+            )
+
+            send_reset_password_email(email, token[1], device_name, browser_name)
+
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+
+class ResetPasswordProceedAPI(APIView):
+    def post(self, request, format=None):
+        # TO DO
+        return Response(None, status=status.HTTP_204_NO_CONTENT)

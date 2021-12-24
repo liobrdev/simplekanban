@@ -12,6 +12,8 @@ from utils import (
     email_regex, name_regex, error_messages_email, error_messages_name,)
 
 
+User = get_user_model()
+
 class LoginSerializer(Serializer):
     email = RegexField(
         email_regex(), error_messages=error_messages_email, write_only=True,)
@@ -87,11 +89,31 @@ class RegistrationSerializer(Serializer):
         if password != password_2:
             raise ValidationError('Passwords do not match.')
 
-        if not validate_password(
-            password, get_user_model()(email=email, name=name),
-        ):
+        if not validate_password(password, User(email=email, name=name)):
             return dict(
                 name=name,
                 email=email,
                 password=password,
                 has_beta_account=True,)
+
+
+class ResetPasswordRequestSerializer(Serializer):
+    email = RegexField(
+        email_regex(), error_messages=error_messages_email, write_only=True,)
+
+    def validate(self, data):
+        email = data.get('email').lower().strip()
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            user = None
+
+        if not user or not user.is_active:
+            return ''
+        return email
+
+
+class ResetPasswordProceedSerializer(Serializer):
+    # TO DO
+    pass

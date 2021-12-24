@@ -13,6 +13,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from authentication.invalid_login import InvalidLoginCache
+from authentication.models import ResetPasswordToken
 from authentication.utils import AuthCommands
 from custom_db_logger.models import StatusLog
 from custom_db_logger.serializers import StatusLogSerializer
@@ -348,3 +349,64 @@ class AuthenticationTest(APITestCase):
         self.assertRegex(response.data['token'], r'^[\w-]{64}$')
         freezer.stop()
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
+    
+    def test_reset_password_request(self):
+        # Successful request w/ existing user
+        user = create_user()
+        response_1 = self.client.post(reverse('reset_password_request'), data={
+            'email': user.email,
+        })
+        self.assertEqual(response_1.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(
+            mail.outbox[0].subject, 'Reset password for SimpleKanban account')
+        self.assertEqual(mail.outbox[0].to, [user.email])
+        protocol = 'http'
+        if not settings.DEBUG:
+            protocol += 's'
+        email_substring = f'{protocol}://{settings.DOMAIN}/reset_password?token='
+        self.assertIn(email_substring, mail.outbox[0].body)
+        reset_password_token_1 = re.search(
+            re.escape(email_substring) + r'([\w-]{64})',
+            mail.outbox[0].body,
+        ).group(1)
+        self.assertIsInstance(reset_password_token_1, str)
+
+        # Already requested w/ existing user, no additional email
+        response_2 = self.client.post(reverse('reset_password_request'), data={
+            'email': user.email,
+        })
+        self.assertEqual(response_2.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+
+        # Non-existing user, successful request but no email
+        response_3 = self.client.post(reverse('reset_password_request'), data={
+            'email': 'notauser@email.com',
+        })
+        self.assertEqual(response_3.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+
+        # Test create new token and new email after an hour has passed
+        now = datetime.now()
+        freezer = freeze_time(timedelta(hours=1))
+        freezer.start()
+        self.assertAlmostEqual(datetime.now().timestamp(), now.timestamp() + 3600, 3)
+        response_4 = self.client.post(reverse('reset_password_request'), data={
+            'email': user.email,
+        })
+        self.assertEqual(response_4.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ResetPasswordToken.objects.count(), 2)
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(
+            mail.outbox[1].subject, 'Reset password for SimpleKanban account')
+        self.assertEqual(mail.outbox[1].to, [user.email])
+        self.assertIn(email_substring, mail.outbox[1].body)
+        reset_password_token_2 = re.search(
+            re.escape(email_substring) + r'([\w-]{64})',
+            mail.outbox[1].body,
+        ).group(1)
+        self.assertIsInstance(reset_password_token_2, str)
+        self.assertNotEqual(reset_password_token_1, reset_password_token_2)

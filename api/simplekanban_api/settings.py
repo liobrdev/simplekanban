@@ -27,6 +27,7 @@ SERVER_EMAIL = config('SERVER_EMAIL')
 
 INSTALLED_APPS = [
     'activity_logs',
+    'authentication',
     'boards',
     'channels',
     'columns',
