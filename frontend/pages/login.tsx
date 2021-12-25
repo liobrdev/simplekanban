@@ -16,12 +16,18 @@ class Login extends Component<Props> {
   constructor(props: Props) {
     super(props);
     this.queryString = getInviteQueryString(props.router.query);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleBack = this.handleBack.bind(this);
+    this.handleForgotPassword = this.handleForgotPassword.bind(this);
   }
 
-  handleClick(e: MouseEvent<HTMLButtonElement>) {
+  handleBack(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     this.props.router.push('/');
+  };
+
+  handleForgotPassword(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    this.props.router.push('/forgot_password');
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -79,7 +85,7 @@ class Login extends Component<Props> {
         <main className='Page Page--login'>
           <div className='LeftArrowIcon-container'>
             <LeftArrowIcon
-              onClick={this.handleClick}
+              onClick={this.handleBack}
               src='/left-arrow-wh.png'
               type='button'
               title='Back to home'
@@ -95,6 +101,13 @@ class Login extends Component<Props> {
               </a>
             </Link>
           </span>
+          <button
+            className='ForgotPassword-button'
+            type='button'
+            onClick={this.handleForgotPassword}
+          >
+            Forgot your password?
+          </button>
           <div className='Footer Footer--login' />
         </main>
       </>

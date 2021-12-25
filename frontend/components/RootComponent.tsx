@@ -68,7 +68,6 @@ class RootComponent extends Component<Props> {
 
 const mapStateToProps = (state: AppState) => ({
   user: state.user.user,
-  state: state,
 });
 
 const connector = connect(mapStateToProps);
