@@ -112,7 +112,7 @@ class DatabaseLoggerTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Error updating user.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
 
     def _fail_register_missing_info(self):
         res_fail = self.client.post(reverse('register'), data={})

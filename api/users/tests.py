@@ -47,7 +47,7 @@ class UserAccountTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Error updating user.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_user_update_fail_wrong_password(self):
@@ -161,7 +161,7 @@ class UserAccountTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Short password.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
         # Not matching, add log
@@ -182,7 +182,7 @@ class UserAccountTest(APITestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[1].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Error changing user password.')
-        self.assertListEqual(mail.outbox[1].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[1].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 2)
 
         # Missing password, add log
@@ -202,7 +202,7 @@ class UserAccountTest(APITestCase):
         self.assertEqual(len(mail.outbox), 3)
         self.assertEqual(mail.outbox[2].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Error changing user password.')
-        self.assertListEqual(mail.outbox[2].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[2].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 3)
 
     def test_user_update_password_fail_same_as_slug(self):
@@ -283,7 +283,7 @@ class UserAccountTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: User denied access.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_user_update_fail_empty_info(self):
@@ -314,7 +314,7 @@ class UserAccountTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Blank user update.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_user_update_fail_empty_info(self):

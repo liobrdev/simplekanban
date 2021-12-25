@@ -72,7 +72,7 @@ class BoardTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Error creating board.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_create_board_fail_blank_data(self):
@@ -91,7 +91,7 @@ class BoardTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Error creating board.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_successful_create_board(self):

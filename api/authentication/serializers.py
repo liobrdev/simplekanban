@@ -5,7 +5,8 @@ from django.contrib.auth.password_validation import validate_password
 
 from rest_framework.exceptions import (
     AuthenticationFailed, PermissionDenied, ValidationError,)
-from rest_framework.serializers import Serializer, CharField, RegexField
+from rest_framework.serializers import (
+    Serializer, CharField, RegexField, SlugField,)
 
 from authentication.invalid_login import InvalidLoginCache
 from utils import (
@@ -101,19 +102,23 @@ class ResetPasswordRequestSerializer(Serializer):
     email = RegexField(
         email_regex(), error_messages=error_messages_email, write_only=True,)
 
-    def validate(self, data):
-        email = data.get('email').lower().strip()
-
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            user = None
-
-        if not user or not user.is_active:
-            return ''
-        return email
+    def validate_email(self, email):
+        return email.lower().strip()
 
 
 class ResetPasswordProceedSerializer(Serializer):
-    # TO DO
-    pass
+    email = RegexField(
+        email_regex(), error_messages=error_messages_email, write_only=True,)
+    password = CharField(trim_whitespace=False, write_only=True)
+    password_2 = CharField(trim_whitespace=False, write_only=True)
+    token = SlugField(max_length=64, min_length=64, write_only=True)
+
+    def validate(self, data):
+        email       = data.get('email').lower().strip()
+        password    = data.get('password')
+        password_2  = data.get('password_2')
+        token       = data.get('token')
+
+        if password != password_2:
+            raise ValidationError('Passwords do not match.')
+        return dict(email=email, password=password, token=token)

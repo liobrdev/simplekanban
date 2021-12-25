@@ -12,32 +12,32 @@ from tasks.models import Task
 
 test_user_1 = {
     'name': 'Jane Doe',
-    'email': 'moore.lyndall@gmail.com',
+    'email': 'janedoe@email.com',
     'password': 'pAssw0rd!',
     'has_team_account': True,
 }
 
 test_user_2 = {
     'name': 'John Doe',
-    'email': 'lio@liobernard.com',
+    'email': 'johndoe@email.com',
     'password': 'pAssw0rd!',
 }
 
 test_user_3 = {
     'name': 'Jesse Doe',
-    'email': 'contact@liobr.dev',
+    'email': 'jessedoe@email.com',
     'password': 'pAssw0rd!',
 }
 
 test_user_4 = {
     'name': 'Jean Doe',
-    'email': 'liobernardbr@gmail.com',
+    'email': 'jeandoe@email.com',
     'password': 'pAssw0rd!',
 }
 
 test_superuser = {
     'name': 'Super User',
-    'email': 'contact@simplekanban.app',
+    'email': 'superuser@email.com',
     'password': 'Admin!123',
 }
 

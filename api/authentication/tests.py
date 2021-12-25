@@ -49,7 +49,7 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Missing register data.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_register_fail_empty_info(self):
@@ -70,7 +70,7 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Missing register data.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_register_fail_invalid_info(self):
@@ -164,7 +164,7 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Missing login data.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_login_fail_empty_info(self):
@@ -181,7 +181,7 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Missing login data.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
 
     def test_login_fail_invalid_info(self):
@@ -291,7 +291,7 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Client was throttled.')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
 
         # Test throttled but no redundant log
         # print('\n')
@@ -410,3 +410,55 @@ class AuthenticationTest(APITestCase):
         ).group(1)
         self.assertIsInstance(reset_password_token_2, str)
         self.assertNotEqual(reset_password_token_1, reset_password_token_2)
+
+    def test_reset_password_proceed(self):
+        user = create_user()
+        token = ResetPasswordToken.objects.create(
+            email=user.email,
+            expiry=timedelta(hours=1),
+        )
+
+        # Fail reset w/ invalid token
+        response_1 = self.client.post(reverse('reset_password_proceed'), data={
+            'email': user.email,
+            'password': 'newPass#123!',
+            'password_2': 'newPass#123!',
+            'token': token[1][1:] + 'a',
+        })
+        self.assertEqual(response_1.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+
+        # Fail reset w/ non-matching email
+        response_2 = self.client.post(reverse('reset_password_proceed'), data={
+            'email': test_user_2['email'],
+            'password': 'newPass#123!',
+            'password_2': 'newPass#123!',
+            'token': token[1],
+        })
+        self.assertEqual(response_2.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+
+        # Successful password reset
+        response_3 = self.client.post(reverse('reset_password_proceed'), data={
+            'email': user.email,
+            'password': 'newPass#123!',
+            'password_2': 'newPass#123!',
+            'token': token[1],
+        })
+        self.assertEqual(response_3.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(ResetPasswordToken.objects.count(), 0)
+
+        # Test new password
+        login_1 = self.client.post(reverse('login'), data={
+            'email': user.email,
+            'password': 'newPass#123!',
+        })
+        self.assertEqual(login_1.status_code, status.HTTP_200_OK)
+
+        # Test old password fail
+        login_2 = self.client.post(reverse('login'), data={
+            'email': user.email,
+            'password': test_user_1['password'],
+        })
+        self.assertEqual(login_2.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(StatusLog.objects.using('logger').count(), 0)

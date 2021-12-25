@@ -10,13 +10,19 @@ from knox.views import LoginView, LogoutView
 
 from rest_framework import status
 from rest_framework.exceptions import (
-    AuthenticationFailed, PermissionDenied, Throttled, ValidationError,)
+    AuthenticationFailed,
+    PermissionDenied,
+    Throttled,
+    ValidationError,)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from authentication.invalid_login import InvalidLoginCache
 from authentication.models import ResetPasswordToken
-from authentication.reset_password import send_reset_password_email
+from authentication.reset_password import (
+    send_reset_password_email,
+    check_reset_token,)
 from authentication.serializers import (
     LoginSerializer,
     RegistrationSerializer,
@@ -28,8 +34,10 @@ from utils import parse_request_metadata
 from utils.exceptions import RequestError
 from utils.throttling import throttle_command
 
+
 logger = logging.getLogger(__name__)
 
+User = get_user_model()
 
 class LoginAPI(LoginView):
     permission_classes = (AllowAny,)
@@ -85,7 +93,7 @@ class RegistrationAPI(LoginAPI):
             registration = RegistrationSerializer(data=request.data)
             registration.is_valid(raise_exception=True)
             data = registration.validated_data
-            user = get_user_model().objects.create_user(**data)
+            user = User.objects.create_user(**data)
             return super().post(request, format=None)
         except Throttled as e:
             raise e
@@ -110,7 +118,7 @@ class RegistrationAPI(LoginAPI):
                 in e.detail
             ):
                 try:
-                    user = get_user_model().objects.get(email=request.data['email'])
+                    user = User.objects.get(email=request.data['email'])
                     user.is_active = False
                     user.save(update_fields=['is_active', 'updated_at'])
                 except Exception as err:
@@ -163,9 +171,14 @@ class ResetPasswordRequestAPI(APIView):
     def post(self, request, format=None):
         serializer = ResetPasswordRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data
+        email = serializer.validated_data['email']
 
-        if not email:
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            user = None
+
+        if not user or not user.is_active:
             return Response(None, status=status.HTTP_204_NO_CONTENT)
 
         try:
@@ -201,5 +214,19 @@ class ResetPasswordRequestAPI(APIView):
 
 class ResetPasswordProceedAPI(APIView):
     def post(self, request, format=None):
-        # TO DO
+        serializer = ResetPasswordProceedSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        try:
+            token = check_reset_token(data['email'], data['token'])
+        except:
+            raise PermissionDenied()
+
+        user = User.objects.get(email=token.email)
+        user.set_password(data['password'])
+        user.save()
+        InvalidLoginCache.delete(token.email)
+        token.delete()
+
         return Response(None, status=status.HTTP_204_NO_CONTENT)

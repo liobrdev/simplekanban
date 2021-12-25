@@ -85,7 +85,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Missing command')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 1)
 
         # Test fail missing command throttled
@@ -103,7 +103,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[1].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Client was throttled.')
-        self.assertListEqual(mail.outbox[1].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[1].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 2)
 
         # Test fail missing command throttled but no log
@@ -127,7 +127,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 3)
         self.assertEqual(mail.outbox[2].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid command')
-        self.assertListEqual(mail.outbox[2].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[2].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 3)
 
         # Test fail unrecoginized command throttled
@@ -146,7 +146,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 4)
         self.assertEqual(mail.outbox[3].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Client was throttled.')
-        self.assertListEqual(mail.outbox[3].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[3].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 4)
 
         # Test fail unrecognized throttle again but no log
@@ -195,7 +195,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid content')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 1)
 
         # Test fail create log w/ missing message
@@ -209,7 +209,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[1].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid content')
-        self.assertListEqual(mail.outbox[1].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[1].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 2)
 
         # Test fail create log w/ non-string message
@@ -226,7 +226,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 3)
         self.assertEqual(mail.outbox[2].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid content')
-        self.assertListEqual(mail.outbox[2].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[2].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 3)
 
         # Test successful create log
@@ -271,7 +271,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid content')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 1)
 
         # Test fail update board title w/ missing 'board_title'
@@ -285,7 +285,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[1].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid content')
-        self.assertListEqual(mail.outbox[1].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[1].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 2)
 
         # Test fail update board title by non-admin
@@ -302,7 +302,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 3)
         self.assertEqual(mail.outbox[2].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Action not allowed')
-        self.assertListEqual(mail.outbox[2].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[2].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 3)
 
         # Test successful board title update
@@ -684,7 +684,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Cannot update own role')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 1)
 
         # Test fail update role to admin
@@ -701,7 +701,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[1].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid content')
-        self.assertListEqual(mail.outbox[1].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[1].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 2)
 
         # Test successful update member role
@@ -817,7 +817,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Action not allowed')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 1)
 
         # Test successful leave by non-admin
@@ -866,7 +866,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Action not allowed')
-        self.assertListEqual(mail.outbox[0].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[0].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 1)
 
         # Test successful remove by admin
@@ -1079,7 +1079,7 @@ class TestWebsockets(TransactionTestCase):
         self.assertRegex(log_1['msg'], log_msg_regex('Invalid content', LogLevels.ERROR))
         self.assertEqual(mail.outbox[1].subject,
             f'{settings.EMAIL_SUBJECT_PREFIX}ERROR: Invalid content')
-        self.assertListEqual(mail.outbox[1].to, ['lio@simplekanban.app'])
+        self.assertListEqual(mail.outbox[1].to, ['contact@simplekanban.app'])
         self.assertEqual(await self._get_status_log_count(), 1)
 
         # Invited user accept invitation
