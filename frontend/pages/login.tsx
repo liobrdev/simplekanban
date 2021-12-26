@@ -101,13 +101,11 @@ class Login extends Component<Props> {
               </a>
             </Link>
           </span>
-          <button
-            className='ForgotPassword-button'
-            type='button'
-            onClick={this.handleForgotPassword}
-          >
-            Forgot your password?
-          </button>
+          <span className='ForgotPassword-link'>
+            <Link href='/forgot_password'>
+              <a>Forgot your password?</a>
+            </Link>
+          </span>
           <div className='Footer Footer--login' />
         </main>
       </>
