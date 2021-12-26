@@ -35,12 +35,13 @@
   h2 {
     color: $red;
     text-align: center;
-    margin-top: 100px;
+    margin-top: 75px;
     margin-left: auto;
     margin-right: auto;
     width: 80vw;
     font-family: $fontSecondary;
     font-weight: 600;
+    font-size: 28px;
     letter-spacing: 1px;
   }
 
@@ -77,6 +78,6 @@
   }
 
   .Footer {
-    height: 100px;
+    height: 75px;
   }
 }
