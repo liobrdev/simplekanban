@@ -56,7 +56,6 @@ export default function ForgotPasswordForm() {
             className='ForgotPasswordForm-input'
             label='Enter your account email'
             name='email'
-            value={form.email}
             type='text'
             disabled={isRequesting || didSend}
             minLength={1}

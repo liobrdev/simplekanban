@@ -16,7 +16,6 @@ from authentication.invalid_login import InvalidLoginCache
 from authentication.models import ResetPasswordToken
 from authentication.utils import AuthCommands
 from custom_db_logger.models import StatusLog
-from custom_db_logger.serializers import StatusLogSerializer
 from custom_db_logger.utils import LogLevels
 from utils.testing import test_user_1, test_user_2, create_user, log_msg_regex
 
@@ -362,6 +361,9 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(
             mail.outbox[0].subject, 'Reset password for SimpleKanban account')
         self.assertEqual(mail.outbox[0].to, [user.email])
+        print('\n')
+        print(mail.outbox[0].body)
+        print('\n')
         protocol = 'http'
         if not settings.DEBUG:
             protocol += 's'

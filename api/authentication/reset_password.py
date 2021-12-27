@@ -5,6 +5,7 @@ except ImportError:
         return a == b
 
 import binascii
+import re
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -19,17 +20,24 @@ from authentication.models import ResetPasswordToken
 
 def send_reset_password_email(email, token_string, device_name, browser_name):
     token = parse.quote(token_string)
+    device_name = device_name.strip()
+    browser_name = browser_name.strip()
 
     protocol = 'http'
     if not settings.DEBUG:
         protocol += 's'
+
+    device_indefinite_article = 'a'
+
+    if re.match('^[aeiou]{1}.*$', device_name, re.IGNORECASE):
+        device_indefinite_article += 'n'
 
     link = f'{protocol}://{settings.DOMAIN}/reset_password?token={token}'
 
     html_message = render_to_string(
         'email_reset_password.html',
         {
-            'device_name': device_name,
+            'device_name_phrase': f'{device_indefinite_article} {device_name}',
             'browser_name': browser_name,
             'link_reset_password': link,
         },
