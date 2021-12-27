@@ -28,6 +28,7 @@ export { default as CloseIcon } from './CloseIcon';
 export { default as DashboardFormCreateBoard } from './DashboardFormCreateBoard';
 export { default as DashboardListBoards } from './DashboardListBoards';
 export { default as DashboardNavigation } from './DashboardNavigation';
+export { default as ForgotPasswordForm } from './ForgotPasswordForm';
 export { default as DashboardRetrieveBoards } from './DashboardRetrieveBoards';
 export { default as HomeLink } from './HomeLink';
 export { default as Input } from './Input';

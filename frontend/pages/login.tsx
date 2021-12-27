@@ -17,17 +17,11 @@ class Login extends Component<Props> {
     super(props);
     this.queryString = getInviteQueryString(props.router.query);
     this.handleBack = this.handleBack.bind(this);
-    this.handleForgotPassword = this.handleForgotPassword.bind(this);
   }
 
   handleBack(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     this.props.router.push('/');
-  };
-
-  handleForgotPassword(e: MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    this.props.router.push('/forgot_password');
   };
 
   componentDidUpdate(prevProps: Props) {
