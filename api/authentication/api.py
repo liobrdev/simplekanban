@@ -190,7 +190,7 @@ class ResetPasswordRequestAPI(APIView):
             try:
                 token = ResetPasswordToken.objects.create(
                     email=email,
-                    expiry=timedelta(hours=1),
+                    expiry=timedelta(minutes=10),
                 )
             except Exception as e:
                 logger.exception('Create reset token failed.', exc_info=e, extra={

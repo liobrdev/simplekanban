@@ -391,11 +391,11 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(ResetPasswordToken.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 1)
 
-        # Test create new token and new email after an hour has passed
+        # Test create new token and new email after 10 minute have passed
         now = datetime.now()
-        freezer = freeze_time(timedelta(hours=1))
+        freezer = freeze_time(timedelta(minutes=10))
         freezer.start()
-        self.assertAlmostEqual(datetime.now().timestamp(), now.timestamp() + 3600, 3)
+        self.assertAlmostEqual(datetime.now().timestamp(), now.timestamp() + 600, 3)
         response_4 = self.client.post(reverse('reset_password_request'), data={
             'email': user.email,
         })
@@ -417,7 +417,7 @@ class AuthenticationTest(APITestCase):
         user = create_user()
         token = ResetPasswordToken.objects.create(
             email=user.email,
-            expiry=timedelta(hours=1),
+            expiry=timedelta(minutes=10),
         )
 
         # Fail reset w/ invalid token
@@ -425,7 +425,7 @@ class AuthenticationTest(APITestCase):
             'email': user.email,
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
-            'token': token[1][1:] + 'a',
+            'token': 'a' + token[1][1:],
         })
         self.assertEqual(response_1.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(ResetPasswordToken.objects.count(), 1)
