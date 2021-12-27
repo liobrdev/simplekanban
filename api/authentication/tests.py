@@ -415,39 +415,58 @@ class AuthenticationTest(APITestCase):
 
     def test_reset_password_proceed(self):
         user = create_user()
+
+        # Fail reset password after 10 minute have passed
+        token_expire = ResetPasswordToken.objects.create(
+            email=user.email,
+            expiry=timedelta(minutes=10),
+        )
+        now = datetime.now()
+        freezer = freeze_time(timedelta(minutes=10))
+        freezer.start()
+        self.assertAlmostEqual(datetime.now().timestamp(), now.timestamp() + 600, 3)
+        fail_expire = self.client.post(reverse('reset_password_proceed'), data={
+            'email': user.email,
+            'password': 'newPass#123!',
+            'password_2': 'newPass#123!',
+            'token': token_expire[1],
+        })
+        self.assertEqual(fail_expire.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(ResetPasswordToken.objects.count(), 0)
+
         token = ResetPasswordToken.objects.create(
             email=user.email,
             expiry=timedelta(minutes=10),
         )
 
         # Fail reset w/ invalid token
-        response_1 = self.client.post(reverse('reset_password_proceed'), data={
+        fail_token = self.client.post(reverse('reset_password_proceed'), data={
             'email': user.email,
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
             'token': 'a' + token[1][1:],
         })
-        self.assertEqual(response_1.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(fail_token.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(ResetPasswordToken.objects.count(), 1)
 
         # Fail reset w/ non-matching email
-        response_2 = self.client.post(reverse('reset_password_proceed'), data={
+        fail_email = self.client.post(reverse('reset_password_proceed'), data={
             'email': test_user_2['email'],
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
             'token': token[1],
         })
-        self.assertEqual(response_2.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(fail_email.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(ResetPasswordToken.objects.count(), 1)
 
         # Successful password reset
-        response_3 = self.client.post(reverse('reset_password_proceed'), data={
+        response = self.client.post(reverse('reset_password_proceed'), data={
             'email': user.email,
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
             'token': token[1],
         })
-        self.assertEqual(response_3.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(ResetPasswordToken.objects.count(), 0)
 
         # Test new password
