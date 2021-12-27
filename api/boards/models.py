@@ -36,9 +36,7 @@ class Board(CustomBaseMixin):
         return f'{self.group_name} "{self.board_title}"'
 
     def get_absolute_url(self):
-        return reverse(
-            'boards-detail',
-            kwargs=dict(board_slug=self.board_slug),)
+        return reverse('board', kwargs=dict(board_slug=self.board_slug))
 
 
 class BoardMembership(CustomBaseMixin):
