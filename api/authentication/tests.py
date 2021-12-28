@@ -13,7 +13,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from authentication.invalid_login import InvalidLoginCache
-from authentication.models import ResetPasswordToken
+from authentication.models import PasswordRecoveryToken
 from authentication.utils import AuthCommands
 from custom_db_logger.models import StatusLog
 from custom_db_logger.utils import LogLevels
@@ -349,14 +349,14 @@ class AuthenticationTest(APITestCase):
         freezer.stop()
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
     
-    def test_reset_password_request(self):
+    def test_forgot_password(self):
         # Successful request w/ existing user
         user = create_user()
-        response_1 = self.client.post(reverse('reset_password_request'), data={
+        response_1 = self.client.post(reverse('forgot_password'), data={
             'email': user.email,
         })
         self.assertEqual(response_1.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
             mail.outbox[0].subject, 'Reset password for SimpleKanban account')
@@ -376,19 +376,19 @@ class AuthenticationTest(APITestCase):
         self.assertIsInstance(reset_password_token_1, str)
 
         # Already requested w/ existing user, no additional email
-        response_2 = self.client.post(reverse('reset_password_request'), data={
+        response_2 = self.client.post(reverse('forgot_password'), data={
             'email': user.email,
         })
         self.assertEqual(response_2.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 1)
 
         # Non-existing user, successful request but no email
-        response_3 = self.client.post(reverse('reset_password_request'), data={
+        response_3 = self.client.post(reverse('forgot_password'), data={
             'email': 'notauser@email.com',
         })
         self.assertEqual(response_3.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 1)
 
         # Test create new token and new email after 10 minute have passed
@@ -396,11 +396,11 @@ class AuthenticationTest(APITestCase):
         freezer = freeze_time(timedelta(minutes=10))
         freezer.start()
         self.assertAlmostEqual(datetime.now().timestamp(), now.timestamp() + 600, 3)
-        response_4 = self.client.post(reverse('reset_password_request'), data={
+        response_4 = self.client.post(reverse('forgot_password'), data={
             'email': user.email,
         })
         self.assertEqual(response_4.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(ResetPasswordToken.objects.count(), 2)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 2)
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(
             mail.outbox[1].subject, 'Reset password for SimpleKanban account')
@@ -412,12 +412,13 @@ class AuthenticationTest(APITestCase):
         ).group(1)
         self.assertIsInstance(reset_password_token_2, str)
         self.assertNotEqual(reset_password_token_1, reset_password_token_2)
+        freezer.stop()
 
-    def test_reset_password_proceed(self):
+    def test_reset_password(self):
         user = create_user()
 
-        # Fail reset password after 10 minute have passed
-        token_expire = ResetPasswordToken.objects.create(
+        # Fail reset password after 10 minutes have passed
+        token_expire = PasswordRecoveryToken.objects.create(
             email=user.email,
             expiry=timedelta(minutes=10),
         )
@@ -425,7 +426,7 @@ class AuthenticationTest(APITestCase):
         freezer = freeze_time(timedelta(minutes=10))
         freezer.start()
         self.assertAlmostEqual(datetime.now().timestamp(), now.timestamp() + 600, 3)
-        fail_expire = self.client.post(reverse('reset_password_proceed'), data={
+        fail_expire = self.client.post(reverse('reset_password'), data={
             'email': user.email,
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
@@ -435,15 +436,15 @@ class AuthenticationTest(APITestCase):
         msg = "Oops, that didn't work! Perhaps this " \
             "link or this account are no longer valid."
         self.assertEqual(fail_expire.data['detail'], msg)
-        self.assertEqual(ResetPasswordToken.objects.count(), 0)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 0)
 
-        token = ResetPasswordToken.objects.create(
+        token = PasswordRecoveryToken.objects.create(
             email=user.email,
             expiry=timedelta(minutes=10),
         )
 
         # Fail reset w/ invalid token
-        fail_token = self.client.post(reverse('reset_password_proceed'), data={
+        fail_token = self.client.post(reverse('reset_password'), data={
             'email': user.email,
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
@@ -451,10 +452,10 @@ class AuthenticationTest(APITestCase):
         })
         self.assertEqual(fail_token.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(fail_token.data['detail'], msg)
-        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
 
         # Fail reset w/ non-matching email
-        fail_email = self.client.post(reverse('reset_password_proceed'), data={
+        fail_email = self.client.post(reverse('reset_password'), data={
             'email': test_user_2['email'],
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
@@ -462,17 +463,17 @@ class AuthenticationTest(APITestCase):
         })
         self.assertEqual(fail_email.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(fail_email.data['detail'], msg)
-        self.assertEqual(ResetPasswordToken.objects.count(), 1)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
 
         # Successful password reset
-        response = self.client.post(reverse('reset_password_proceed'), data={
+        response = self.client.post(reverse('reset_password'), data={
             'email': user.email,
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
             'token': token[1],
         })
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(ResetPasswordToken.objects.count(), 0)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 0)
 
         # Test new password
         login_1 = self.client.post(reverse('login'), data={
@@ -487,4 +488,5 @@ class AuthenticationTest(APITestCase):
             'password': test_user_1['password'],
         })
         self.assertEqual(login_2.status_code, status.HTTP_401_UNAUTHORIZED)
+        freezer.stop()
         self.assertEqual(StatusLog.objects.using('logger').count(), 0)

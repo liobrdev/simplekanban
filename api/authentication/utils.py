@@ -5,5 +5,5 @@ class AuthCommands(TextChoices):
     LOGIN = 'login'
     LOGOUT = 'logout'
     REGISTER = 'register'
-    RESET_PW_REQUEST = 'reset_password_request'
-    RESET_PW_PROCEED = 'reset_password_proceed'
+    FORGOT_PW = 'forgot_password'
+    RESET_PW = 'reset_password'

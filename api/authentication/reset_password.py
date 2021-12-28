@@ -15,7 +15,7 @@ from django.utils.html import strip_tags
 from knox.crypto import hash_token
 from urllib import parse
 
-from authentication.models import ResetPasswordToken
+from authentication.models import PasswordRecoveryToken
 
 
 def send_reset_password_email(email, token_string, device_name, browser_name):
@@ -55,7 +55,7 @@ def send_reset_password_email(email, token_string, device_name, browser_name):
 
 
 def check_reset_token(email, token_string):
-    for reset_token in ResetPasswordToken.objects.filter(email=email):
+    for reset_token in PasswordRecoveryToken.objects.filter(email=email):
         if reset_token.expiry < timezone.now():
             reset_token.delete()
             continue

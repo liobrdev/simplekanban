@@ -37,7 +37,7 @@ export default function ResetPasswordForm({ token }: Props) {
 
     try {
       const response = await request
-        .post('/auth/reset_password/proceed/')
+        .post('/auth/reset_password/')
         .send({ ...form, token });
 
       if (response.status === 204) {

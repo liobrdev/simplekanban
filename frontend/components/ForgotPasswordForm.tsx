@@ -26,7 +26,7 @@ export default function ForgotPasswordForm() {
 
     try {
       const response =
-        await request.post('/auth/reset_password/request/').send({ ...form });
+        await request.post('/auth/forgot_password/').send({ ...form });
       if (response.status === 204) {
         setDidSend(true);
         setForm({ email: '' });

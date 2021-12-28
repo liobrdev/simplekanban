@@ -19,15 +19,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.invalid_login import InvalidLoginCache
-from authentication.models import ResetPasswordToken
+from authentication.models import PasswordRecoveryToken
 from authentication.reset_password import (
     send_reset_password_email,
     check_reset_token,)
 from authentication.serializers import (
     LoginSerializer,
     RegistrationSerializer,
-    ResetPasswordRequestSerializer,
-    ResetPasswordProceedSerializer,)
+    ForgotPasswordSerializer,
+    ResetPasswordSerializer,)
 from authentication.utils import AuthCommands
 from users.exceptions import DuplicateEmail, DuplicateSuperUser
 from utils import parse_request_metadata
@@ -167,9 +167,9 @@ class LogoutAPI(LogoutView):
             return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
-class ResetPasswordRequestAPI(APIView):
+class ForgotPasswordAPI(APIView):
     def post(self, request, format=None):
-        serializer = ResetPasswordRequestSerializer(data=request.data)
+        serializer = ForgotPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
 
@@ -182,20 +182,20 @@ class ResetPasswordRequestAPI(APIView):
             return Response(None, status=status.HTTP_204_NO_CONTENT)
 
         try:
-            token = ResetPasswordToken.objects.get(
+            token = PasswordRecoveryToken.objects.get(
                 email=email,
                 expiry__gt=timezone.now(),
             )
-        except ResetPasswordToken.DoesNotExist:
+        except PasswordRecoveryToken.DoesNotExist:
             try:
-                token = ResetPasswordToken.objects.create(
+                token = PasswordRecoveryToken.objects.create(
                     email=email,
                     expiry=timedelta(minutes=10),
                 )
             except Exception as e:
                 logger.exception('Create reset token failed.', exc_info=e, extra={
                     'client_ip': request.META['CLIENT_IP'],
-                    'command': AuthCommands.RESET_PW_REQUEST,
+                    'command': AuthCommands.FORGOT_PW,
                     'metadata': parse_request_metadata(request),
                 })
                 raise RequestError()
@@ -212,9 +212,9 @@ class ResetPasswordRequestAPI(APIView):
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
-class ResetPasswordProceedAPI(APIView):
+class ResetPasswordAPI(APIView):
     def post(self, request, format=None):
-        serializer = ResetPasswordProceedSerializer(data=request.data)
+        serializer = ResetPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 

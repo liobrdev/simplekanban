@@ -97,7 +97,7 @@ class RegistrationSerializer(Serializer):
                 has_beta_account=True,)
 
 
-class ResetPasswordRequestSerializer(Serializer):
+class ForgotPasswordSerializer(Serializer):
     email = RegexField(
         email_regex(), error_messages=error_messages_email, write_only=True,)
 
@@ -105,7 +105,7 @@ class ResetPasswordRequestSerializer(Serializer):
         return email.lower().strip()
 
 
-class ResetPasswordProceedSerializer(Serializer):
+class ResetPasswordSerializer(Serializer):
     email = RegexField(
         email_regex(), error_messages=error_messages_email, write_only=True,)
     password = CharField(trim_whitespace=False, write_only=True)
