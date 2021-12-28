@@ -12,6 +12,20 @@ const description =
   "Easy-to-use, interactive Kanban boards for all of your projects.";
 
 class RootComponent extends Component<Props> {
+  setAppHeight() {
+    document.documentElement
+      .style
+      .setProperty('--app-height', `${window.innerHeight}px`);
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.setAppHeight);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.setAppHeight);
+  }
+
   render() {
     return (
       <>
