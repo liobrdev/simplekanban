@@ -221,7 +221,9 @@ class ResetPasswordProceedAPI(APIView):
         try:
             token = check_reset_token(data['email'], data['token'])
         except:
-            raise PermissionDenied()
+            msg = "Oops, that didn't work! Perhaps this " \
+                "link or this account are no longer valid."
+            raise PermissionDenied(msg)
 
         user = User.objects.get(email=token.email)
         user.set_password(data['password'])

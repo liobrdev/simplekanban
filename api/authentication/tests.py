@@ -432,6 +432,9 @@ class AuthenticationTest(APITestCase):
             'token': token_expire[1],
         })
         self.assertEqual(fail_expire.status_code, status.HTTP_403_FORBIDDEN)
+        msg = "Oops, that didn't work! Perhaps this " \
+            "link or this account are no longer valid."
+        self.assertEqual(fail_expire.data['detail'], msg)
         self.assertEqual(ResetPasswordToken.objects.count(), 0)
 
         token = ResetPasswordToken.objects.create(
@@ -444,9 +447,10 @@ class AuthenticationTest(APITestCase):
             'email': user.email,
             'password': 'newPass#123!',
             'password_2': 'newPass#123!',
-            'token': 'a' + token[1][1:],
+            'token': 'this_is_not_a_matching_token',
         })
         self.assertEqual(fail_token.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(fail_token.data['detail'], msg)
         self.assertEqual(ResetPasswordToken.objects.count(), 1)
 
         # Fail reset w/ non-matching email
@@ -457,6 +461,7 @@ class AuthenticationTest(APITestCase):
             'token': token[1],
         })
         self.assertEqual(fail_email.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(fail_email.data['detail'], msg)
         self.assertEqual(ResetPasswordToken.objects.count(), 1)
 
         # Successful password reset

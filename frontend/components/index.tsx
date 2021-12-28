@@ -39,6 +39,7 @@ export { default as LogoutUser } from './LogoutUser';
 export { default as MenuIcon } from './MenuIcon';
 export { default as PlusIcon } from './PlusIcon';
 export { default as RegisterForm } from './RegisterForm';
+export { default as ResetPasswordForm } from './ResetPasswordForm';
 export { default as RetrieveUser } from './RetrieveUser';
 export { default as RightArrowIcon } from './RightArrowIcon';
 export { default as RootComponent } from './RootComponent';
