@@ -1,17 +1,3 @@
-:root {
-  --app-height: 100%;
-}
-
-html,
-body {
-  padding: 0;
-  height: 100vh;
-
-  @media not all and (hover:hover) {
-    height: var(--app-height);
-  }
-}
-
 h1,
 h2,
 h3,
@@ -50,6 +36,8 @@ html {
 }
 
 body {
+  padding: 0;
+  position: relative;
   margin: auto;
   font-family: $fontPrimary;
 }

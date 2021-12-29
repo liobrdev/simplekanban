@@ -13,13 +13,12 @@ const description =
 
 class RootComponent extends Component<Props> {
   setAppHeight() {
-    document.documentElement
-      .style
-      .setProperty('--app-height', `${window.innerHeight}px`);
+    document.body.style.height = window.innerHeight + 'px';
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.setAppHeight);
+    this.setAppHeight();
   }
 
   componentWillUnmount() {
