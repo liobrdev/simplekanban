@@ -11,7 +11,7 @@ import { Input, CloseIcon } from './';
 const initialForm = { email: '', current_password: '' };
 const initialError: ReturnType<typeof parseErrorResponse> = {};
 
-export default function AccountFormUpdateUser() {
+export default function AccountFormDeleteUser() {
   const { formOnDeleteUser } = useAppSelector((state) => state.account);
   const {
     isLoggingIn,
