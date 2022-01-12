@@ -62,7 +62,7 @@
   
       .AccountFormDeleteUser-overlay {
         z-index: 6;
-        position: absolute;
+        position: fixed;
         background: black;
         opacity: 0.5;
         width: 100%;

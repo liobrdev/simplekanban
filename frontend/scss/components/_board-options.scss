@@ -11,7 +11,7 @@
   }
 
   &-overlay {
-    position: absolute;
+    position: fixed;
     z-index: 4;
     background: black;
     opacity: 0.333;
@@ -606,7 +606,7 @@
         // }
 
         &-overlay {
-          position: absolute;
+          position: fixed;
           background: black;
           opacity: 0.333;
           width: 100%;
