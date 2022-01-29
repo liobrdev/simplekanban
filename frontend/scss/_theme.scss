@@ -40,6 +40,8 @@ body {
   position: relative;
   margin: auto;
   font-family: $fontPrimary;
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 .SiteContainer {
