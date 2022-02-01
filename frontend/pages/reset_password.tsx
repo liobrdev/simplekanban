@@ -4,6 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 
 import Head from 'next/head';
+import Link from 'next/link';
 import { withRouter, NextRouter } from 'next/router';
 
 import { LeftArrowIcon, LoadingView, ResetPasswordForm } from '@/components';
@@ -84,7 +85,25 @@ class ResetPassword extends Component<Props, State> {
           </div>
           <h2>Reset your password</h2>
           <ResetPasswordForm token={this.state.token} />
-          <div className='Footer Footer--resetPassword' />
+          <span className='ResetPasswordLink'>
+            Stay on same page?&nbsp;
+            <Link href='/reset_password'>
+              <a className='ResetPasswordLink-link'>Reset password</a>
+            </Link>
+          </span>
+          <div className='Footer Footer--resetPassword'>
+            <div className='FooterLinks'>
+              <span>&copy; 2022</span>
+              &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+              <Link href={{ pathname: '/privacy' }}>
+                <a className='FooterLink FooterLink--privacy'>Privacy Policy</a>
+              </Link>
+              &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+              <Link href={{ pathname: '/terms' }}>
+                <a className='FooterLink FooterLink--terms'>Terms and Conditions</a>
+              </Link>
+            </div>
+          </div>
         </main>
       </>
     );

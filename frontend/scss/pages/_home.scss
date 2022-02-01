@@ -22,9 +22,7 @@
 
   .HomeLinks {
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 60px;
+    margin: 60px auto;
     width: 75%;
 
     .HomeLink {
@@ -66,10 +64,6 @@
         }
       }
     }
-  }
-
-  .Footer {
-    height: 200px;
   }
 
   @include for-tablet-portrait-up {

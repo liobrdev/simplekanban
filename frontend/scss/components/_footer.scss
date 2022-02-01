@@ -1,0 +1,27 @@
+.Footer {
+  height: 100px;
+  display: block;
+  position: relative;
+  width: 100%;
+  bottom: 0;
+  color: $red;
+  font-family: $fontSecondary;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1px;
+
+  .FooterLinks {
+    position: relative;
+    top: 60%;
+    text-align: center;
+
+    .FooterLink {
+      color: $red;
+
+      &:hover,
+      &:focus {
+        text-decoration: underline;
+      }
+    }
+  }
+}

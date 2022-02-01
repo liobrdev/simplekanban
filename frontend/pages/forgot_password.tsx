@@ -2,6 +2,7 @@ import React, { Component, MouseEvent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import Head from 'next/head';
+import Link from 'next/link';
 import { withRouter, NextRouter } from 'next/router';
 
 import { LeftArrowIcon, LoadingView, ForgotPasswordForm } from '@/components';
@@ -71,7 +72,25 @@ class ForgotPassword extends Component<Props> {
           </div>
           <h2>Forgot your password?</h2>
           <ForgotPasswordForm />
-          <div className='Footer Footer--forgotPassword' />
+          <span className='ForgotPasswordLink'>
+            Stay on same page?&nbsp;
+            <Link href='/forgot_password'>
+              <a className='ForgotPasswordLink-link'>Forgot password</a>
+            </Link>
+          </span>
+          <div className='Footer Footer--forgotPassword'>
+            <div className='FooterLinks'>
+              <span>&copy; 2022</span>
+              &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+              <Link href={{ pathname: '/privacy' }}>
+                <a className='FooterLink FooterLink--privacy'>Privacy Policy</a>
+              </Link>
+              &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+              <Link href={{ pathname: '/terms' }}>
+                <a className='FooterLink FooterLink--terms'>Terms and Conditions</a>
+              </Link>
+            </div>
+          </div>
         </main>
       </>
     );

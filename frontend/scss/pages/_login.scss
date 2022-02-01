@@ -55,6 +55,14 @@
       font-weight: 600;
       text-transform: uppercase;
     }
+
+    &--login {
+      color: white;
+
+      .LoginLink-link {
+        color: white;
+      }
+    }
   }
   
   .ForgotPassword-link {
@@ -75,9 +83,5 @@
         text-decoration: underline;
       }
     }
-  }
-
-  .Footer {
-    height: 75px;
   }
 }

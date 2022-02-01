@@ -1,6 +1,4 @@
-.Page--register {
-  padding: 0px 15px;
-
+.Page--legal {
   .LeftArrowIcon-container {
     z-index: 3;
     position: absolute;
@@ -32,36 +30,15 @@
     }
   }
 
-  h2 {
-    color: $red;
-    text-align: center;
-    margin-top: 75px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 80vw;
+  .LegalText {
+    position: relative;
+    width: 75%;
+    margin: 100px auto 50px;
     font-family: $fontSecondary;
-    font-weight: 600;
-    font-size: 28px;
-    letter-spacing: 1px;
-  }
 
-  .RegisterLink {
-    display: block;
-    text-align: center;
-    margin-top: 30px;
-    
-    &-link {
+    h1 {
       color: $red;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    &--register {
-      color: white;
-
-      .RegisterLink-link {
-        color: white;
-      }
+      letter-spacing: 2px;
     }
   }
 }
