@@ -2,8 +2,9 @@ import React, { Component, FocusEvent, InputHTMLAttributes } from 'react';
 
 
 interface Props extends InputHTMLAttributes<HTMLInputElement>{
-  label?: string;
+  label?: string | JSX.Element;
   showAsterisk?: boolean;
+  showObelisk?: boolean;
 }
 
 export default class Input extends Component<Props> {
@@ -21,8 +22,8 @@ export default class Input extends Component<Props> {
   }
 
   render() {
-    const { className, id, showAsterisk, ...rest } = this.props;
-    const { disabled, label, name, required } = rest;
+    const { className, id, showAsterisk, showObelisk, ...rest } = this.props;
+    const { disabled, label, name } = rest;
 
     return (
       <div className={`Input${!!className ? ' ' + className : ''}`} id={id}>
@@ -39,8 +40,11 @@ export default class Input extends Component<Props> {
           id={name}
           onFocus={this.handleFocus}
         />
-        {required && showAsterisk && (
+        {showAsterisk && (
           <span className='Input-asterisk'>*</span>
+        )}
+        {showObelisk && (
+          <span className='Input-obelisk'>&dagger;</span>
         )}
       </div>
     );
