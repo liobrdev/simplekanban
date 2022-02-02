@@ -20,10 +20,10 @@ class Account extends Component<Props> {
   constructor(props: Props) {
     super(props);
     this.authTimeout = undefined;
-    this.handleClick = this.handleClick.bind(this);
+    this.handleBack = this.handleBack.bind(this);
   }
 
-  handleClick(e: MouseEvent<HTMLButtonElement>) {
+  handleBack(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     this.props.router.push('/dashboard');
   };
@@ -58,7 +58,7 @@ class Account extends Component<Props> {
           <div className='LeftArrowIcon-container'>
             <LeftArrowIcon
               color='wh'
-              onClick={this.handleClick}
+              onClick={this.handleBack}
               type='button'
             />
           </div>
