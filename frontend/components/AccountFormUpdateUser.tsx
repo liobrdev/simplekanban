@@ -4,34 +4,37 @@ import { useState } from 'react';
 import { mutate } from 'swr';
 
 import { useAppDispatch, useAppSelector } from '@/hooks';
-import { checkUser, IModal } from '@/types';
+import { checkUser, IModal, IUser, IUserForm } from '@/types';
 import { parseErrorResponse, request } from '@/utils';
 
 import { Input } from './';
 
 
-const initialForm = {
-  name: '',
-  email: '',
-  password: '',
-  password_2: '',
-  current_password: '',
-};
+interface Props {
+  user: IUser;
+}
 
-const initialError: ReturnType<typeof parseErrorResponse> = {};
-
-export default function AccountFormUpdateUser() {
+export default function AccountFormUpdateUser({ user }: Props ) {
   const {
     isLoggingIn,
     isLoggingOut,
     isRegistering,
     isUpdating,
-    user,
   } = useAppSelector((state) => state.user);
   const { formOnDeleteUser } = useAppSelector((state) => state.account);
   const dispatch = useAppDispatch();
 
-  const [form, setForm] = useState({ ...initialForm, ...user });
+  const initialForm: IUserForm = {
+    name: user.name,
+    email: user.email,
+    password: '',
+    password_2: '',
+    current_password: '',
+  };
+
+  const initialError: ReturnType<typeof parseErrorResponse> = {};
+
+  const [form, setForm] = useState({ ...initialForm });
   const [error, setError] = useState({ ...initialError });
 
   const handleInput = () => (e: FormEvent<HTMLInputElement>) => {
@@ -49,15 +52,50 @@ export default function AccountFormUpdateUser() {
     (document.activeElement as HTMLElement).blur();
   };
 
+  const handleVerifyEmail = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    dispatch({ type: 'START_UPDATE_USER' });
+    setError({});
+
+    try {
+      const token = localStorage.getItem('simplepasswords_token');
+      await request
+        .get('/auth/verify_email/')
+        .set({ 'Authorization': `Token ${token}` })
+        .then((res) => {
+          if (res.noContent) {
+            const accountModal: IModal = {
+              message: 'Please check your email to complete verification.',
+              page: 'account',
+            };
+            dispatch({ type: 'ACCOUNT_MODAL_SHOW' , accountModal });
+          }
+        });
+    } catch (err: any) {
+      // Possibly report to api in the future, for now just console.error
+      // reportErrorToAPI(err);
+      console.error(err);
+
+      if (err?.response?.unauthorized || err?.response?.forbidden) {
+        localStorage.removeItem('simplepasswords_token');
+        dispatch({ type: 'START_LOGOUT_USER' });
+      }
+
+      setError(parseErrorResponse(err?.response?.body, Object.keys(form)));
+    } finally {
+      dispatch({ type: 'STOP_UPDATE_USER' });
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch({ type: 'START_UPDATE_USER' });
     setError({});
 
     try {
-      const token = localStorage.getItem('simple_kanban_token');
+      const token = localStorage.getItem('simplepasswords_token');
       const data = await request
-        .patch(`/users/${user?.user_slug}/`)
+        .patch(`/users/${user.user_slug}/`)
         .set({ 'Authorization': `Token ${token}` })
         .send({ ...form })
         .then((res) => checkUser(res.body, res));
@@ -66,7 +104,10 @@ export default function AccountFormUpdateUser() {
       const { name, email } = data;
       setForm({ ...initialForm, name, email });
       window.scrollTo(0, 0);
-      const accountModal: IModal = { message: 'Update successful!' };
+      const accountModal: IModal = {
+        message: 'Update successful!',
+        page: 'account',
+      };
       dispatch({ type: 'ACCOUNT_MODAL_SHOW' , accountModal });
     } catch (err: any) {
       dispatch({ type: 'STOP_UPDATE_USER' });
@@ -74,12 +115,8 @@ export default function AccountFormUpdateUser() {
       // reportErrorToAPI(err);
       console.error(err);
 
-      if (
-        err?.response?.unauthorized ||
-        err?.response?.forbidden ||
-        err?.response?.notFound
-      ) {
-        localStorage.removeItem('simple_kanban_token');
+      if (err?.response?.unauthorized || err?.response?.forbidden) {
+        localStorage.removeItem('simplepasswords_token');
         dispatch({ type: 'START_LOGOUT_USER' });
       }
 
@@ -100,6 +137,38 @@ export default function AccountFormUpdateUser() {
     form.current_password
   );
 
+  const emailIsVerified = !!user.email_is_verified;
+
+  const emailVerification = (
+    <>
+      <span
+        className={
+          'AccountFormUpdateUser-verified ' +
+          'AccountFormUpdateUser-verified--email'
+        }
+      >
+        {(emailIsVerified && form.email === user.email) && '(verified)'}
+        {(!emailIsVerified || form.email !== user.email) && '(not verified)'}
+      </span>
+      {!emailIsVerified && form.email === user.email && (
+        <>
+          <br/>
+          <button
+            className={
+              'AccountFormUpdateUser-verify ' +
+              'AccountFormUpdateUser-verify--email'
+            }
+            type='button'
+            disabled={isUpdating}
+            onClick={handleVerifyEmail}
+          >
+            {isUpdating ? 'Sending...' : 'Verify email address'}
+          </button>
+        </>
+      )}
+    </>
+  );
+
   return (
     <form
       className='AccountFormUpdateUser'
@@ -116,7 +185,6 @@ export default function AccountFormUpdateUser() {
         minLength={1}
         maxLength={50}
         onChange={handleInput()}
-        autoFocus
         required
         showAsterisk
       />
@@ -126,7 +194,7 @@ export default function AccountFormUpdateUser() {
       <br/>
       <Input
         className='AccountFormUpdateUser-input'
-        label='Email address'
+        label={<>Email address{emailVerification}</>}
         type='email'
         name='email'
         value={form.email}
@@ -148,7 +216,6 @@ export default function AccountFormUpdateUser() {
         name='password'
         value={form.password}
         disabled={isUpdating || formOnDeleteUser}
-        maxLength={128}
         onChange={handleInput()}
       />
       {error?.password?.map(
@@ -166,10 +233,9 @@ export default function AccountFormUpdateUser() {
           (!form.password && !form.password_2) ||
           formOnDeleteUser
         }
-        maxLength={128}
         onChange={handleInput()}
         required={!!form.password}
-        showAsterisk
+        showAsterisk={!!form.password}
       />
       {error?.password_2?.map(
         e => <p key={e.id} className='AccountFormUpdateUser-error'>{e.msg}</p>
@@ -182,7 +248,6 @@ export default function AccountFormUpdateUser() {
         name='current_password'
         value={form.current_password}
         disabled={isUpdating || formOnDeleteUser}
-        maxLength={128}
         onChange={handleInput()}
         required
         showAsterisk
@@ -199,11 +264,11 @@ export default function AccountFormUpdateUser() {
       )}
       <br/>
       <p className='AccountFormUpdateUser-text'>
-        <span>*</span>Required
+        <span>*</span>&nbsp;Required
       </p>
       <br/>
       <button
-        className='AccountFormUpdateUser-button'
+        className='AccountFormUpdateUser-button AccountFormUpdateUser-button--undo'
         type='button'
         disabled={isUpdating || formOnDeleteUser}
         onClick={handleReset}

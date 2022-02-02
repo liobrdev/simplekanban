@@ -146,6 +146,7 @@ export interface IUser {
   user_slug: string;
   name: string;
   email: string;
+  email_is_verified: boolean;
 }
 
 export interface IUserForm {
