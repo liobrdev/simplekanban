@@ -18,7 +18,7 @@ class LogoutUser extends Component<Props, State> {
     super(props);
     this.modal = createRef();
     this.state = { showWarning: false };
-    this.events = ['load', 'mousedown', 'click', 'scroll', 'keypress'];
+    this.events = ['load', 'mousedown', 'click', 'scroll', 'keydown'];
     this.warnTimeout = undefined;
     this.logoutTimeout = undefined;
     this.resetTimeouts = this.resetTimeouts.bind(this);
