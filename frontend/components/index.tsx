@@ -37,6 +37,7 @@ export { default as LoadingView } from './LoadingView';
 export { default as LoginForm } from './LoginForm';
 export { default as LogoutUser } from './LogoutUser';
 export { default as MenuIcon } from './MenuIcon';
+export { default as Modal } from './Modal';
 export { default as PlusIcon } from './PlusIcon';
 export { default as RegisterForm } from './RegisterForm';
 export { default as ResetPasswordForm } from './ResetPasswordForm';

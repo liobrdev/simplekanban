@@ -111,7 +111,8 @@ export interface IMessage {
 }
 
 export interface IModal {
-  message: string,
+  page: 'account' | 'board';
+  message: string;
   leftButton?: IButton;
   rightButton?: IButton;
 }
