@@ -11,13 +11,13 @@ export const accountReducer = (
   action: any,
 ): IAccountState => {
   switch (action.type) {
-    case 'ACCOUNT_DELETE_FORM_SHOW':
+    case 'ACCOUNT_FORM_DELETE_SHOW':
       return {
         ...state,
         formOnDeleteUser: true,
       };
 
-    case 'ACCOUNT_DELETE_FORM_CLOSE':
+    case 'ACCOUNT_FORM_DELETE_CLOSE':
       return {
         ...state,
         formOnDeleteUser: false,

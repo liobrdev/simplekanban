@@ -33,7 +33,7 @@ export default function AccountFormDeleteUser() {
     setForm({ ...initialForm });
     setError({});
     if (thisComponent.current) disableBodyScroll(thisComponent.current);
-    dispatch({ type: 'ACCOUNT_DELETE_FORM_SHOW' });
+    dispatch({ type: 'ACCOUNT_FORM_DELETE_SHOW' });
   }
 
   const handleClose = (e: MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
@@ -41,7 +41,7 @@ export default function AccountFormDeleteUser() {
     setForm({ ...initialForm });
     setError({});
     if (thisComponent.current) enableBodyScroll(thisComponent.current);
-    dispatch({ type: 'ACCOUNT_DELETE_FORM_CLOSE' });
+    dispatch({ type: 'ACCOUNT_FORM_DELETE_CLOSE' });
   }
 
   const handleInput = () => (e: FormEvent<HTMLInputElement>) => {
