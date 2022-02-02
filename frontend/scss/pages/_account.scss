@@ -12,7 +12,7 @@
     all: unset;
   }
 
-  h3, .AccountFormUpdateUser, .AccountFormDeleteUser {
+  h3, .AccountFormUpdateUser, .AccountButtonDeleteUser {
     position: relative;
     margin-top: 55px;
     margin-left: auto;
@@ -26,6 +26,7 @@
     position: relative;
     margin-top: 80px;
     text-transform: uppercase;
+    font-size: 23px;
     font-weight: 300;
     letter-spacing: 1px;
     color: $red;
@@ -33,17 +34,21 @@
 
   .AccountButtonDeleteUser {
     display: block;
-    cursor: pointer;
-    color: $berry;
-    padding-bottom: 10px;
-  
-    &:focus {
-      outline: 1px dotted;
-    }
-    
-    &:focus,
-    &:hover {
-      text-decoration: underline;
+
+    &-button {
+      all: unset;
+      cursor: pointer;
+      color: $berry;
+      padding-bottom: 10px;
+      
+      &:focus {
+        outline: 1px dotted;
+      }
+      
+      &:focus,
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -242,8 +247,8 @@
       height: 50px;
     }
 
-    h3, .AccountFormUpdateUser {
-      width: 84%;
+    h3, .AccountFormUpdateUser, .AccountButtonDeleteUser {
+      max-width: 444px;
     }
   }
 }

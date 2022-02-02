@@ -62,7 +62,7 @@
     &:focus {
       cursor: pointer;
       color: white;
-      background-color: $blue;
+      background-color: $lightgreen;
       text-shadow: 1px 1px rgba(0,0,0,0.2);
     }
 
@@ -80,7 +80,7 @@
 
       &:hover,
       &:focus {
-        background-color: $red;
+        background-color: $blue;
       }
 
       &:disabled {
@@ -108,7 +108,7 @@
       border: none;
       outline: none;
       position: relative;
-      background-color: $berry;
+      background-color: $red;
       box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2);
       text-transform: uppercase;
       -webkit-transition: all 0.1s linear;
