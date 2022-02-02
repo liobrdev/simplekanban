@@ -29,7 +29,6 @@ export { default as DashboardListBoards } from './DashboardListBoards';
 export { default as DashboardNavigation } from './DashboardNavigation';
 export { default as ForgotPasswordForm } from './ForgotPasswordForm';
 export { default as DashboardRetrieveBoards } from './DashboardRetrieveBoards';
-export { default as HomeLink } from './HomeLink';
 export { default as Input } from './Input';
 export { default as LeftArrowIcon } from './LeftArrowIcon';
 export { default as LoadingView } from './LoadingView';
