@@ -1,6 +1,5 @@
 export { default as AccountFormDeleteUser } from './AccountFormDeleteUser';
 export { default as AccountFormUpdateUser } from './AccountFormUpdateUser';
-export { default as AccountModal } from './AccountModal';
 export { default as BoardColumn } from './BoardColumn';
 export { default as BoardColumnButtons } from './BoardColumnButtons';
 export { default as BoardColumnOptions } from './BoardColumnOptions';
