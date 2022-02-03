@@ -56,7 +56,7 @@ class Board extends Component<Props> {
 
   setUpRws() {
     // Configure WebSocket
-    const token = localStorage.getItem('simple_kanban_token');
+    const token = localStorage.getItem('simplekanban_token');
     const wsScheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const wsHost =
       process.env.NEXT_PUBLIC_SIMPLEKANBAN_API_HOST || window.location.host;

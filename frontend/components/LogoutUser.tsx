@@ -70,7 +70,7 @@ class LogoutUser extends Component<Props, State> {
   async componentDidUpdate(prevProps: Props) {
     if (this.props.isLoggingOut && !prevProps.isLoggingOut) {
       try {
-        const token = localStorage.getItem('simple_kanban_token');
+        const token = localStorage.getItem('simplekanban_token');
         await request
           .post('/auth/logout/')
           .set({ 'Authorization': `Token ${token}` })
@@ -80,7 +80,7 @@ class LogoutUser extends Component<Props, State> {
         // reportErrorToAPI(error);
         console.error(error);
       } finally {
-        localStorage.removeItem('simple_kanban_token');
+        localStorage.removeItem('simplekanban_token');
         this.props.successLogoutUser();
         mutate('/users/');
       }

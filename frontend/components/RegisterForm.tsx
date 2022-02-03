@@ -44,11 +44,11 @@ export default function RegisterForm({ initial_email }: Props) {
           const data: IUser = checkUser(res.body?.user, res);
           return { token, data };
         });
-      localStorage.setItem('simple_kanban_token', token);
+      localStorage.setItem('simplekanban_token', token);
       dispatch({ type: 'SUCCESS_REGISTER_USER', data });
       mutate('/users/');
     } catch (err: any) {
-      localStorage.removeItem('simple_kanban_token');
+      localStorage.removeItem('simplekanban_token');
       dispatch({ type: 'STOP_REGISTER_USER' });
       // Possibly report to api in the future, for now just console.error
       // reportErrorToAPI(err);

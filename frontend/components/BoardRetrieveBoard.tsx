@@ -12,7 +12,7 @@ interface Props {
 }
 
 const fetcher = (url: string) => {
-  const token = localStorage.getItem('simple_kanban_token');
+  const token = localStorage.getItem('simplekanban_token');
 
   return request
     .get(url)

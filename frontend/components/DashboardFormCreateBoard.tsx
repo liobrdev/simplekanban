@@ -52,7 +52,7 @@ export default function DashboardFormCreateBoard() {
     setError({});
 
     try {
-      const token = localStorage.getItem('simple_kanban_token');
+      const token = localStorage.getItem('simplekanban_token');
       const board = await request
         .post('/boards/')
         .set({ 'Authorization': `Token ${token}` })
@@ -70,7 +70,7 @@ export default function DashboardFormCreateBoard() {
       const res = err?.response;
 
       if (res?.unauthorized || res?.forbidden) {
-        localStorage.removeItem('simple_kanban_token');
+        localStorage.removeItem('simplekanban_token');
         if (thisComponent.current) enableBodyScroll(thisComponent.current);
         dispatch({ type: 'START_LOGOUT_USER' });
       }

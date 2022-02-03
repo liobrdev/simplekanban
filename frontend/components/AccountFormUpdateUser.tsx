@@ -58,7 +58,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
     setError({});
 
     try {
-      const token = localStorage.getItem('simple_kanban_token');
+      const token = localStorage.getItem('simplekanban_token');
       await request
         .get('/auth/verify_email/')
         .set({ 'Authorization': `Token ${token}` })
@@ -77,7 +77,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
       console.error(err);
 
       if (err?.response?.unauthorized || err?.response?.forbidden) {
-        localStorage.removeItem('simple_kanban_token');
+        localStorage.removeItem('simplekanban_token');
         dispatch({ type: 'START_LOGOUT_USER' });
       }
 
@@ -97,7 +97,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
     setError({});
 
     try {
-      const token = localStorage.getItem('simple_kanban_token');
+      const token = localStorage.getItem('simplekanban_token');
       const data = await request
         .patch(`/users/${user.user_slug}/`)
         .set({ 'Authorization': `Token ${token}` })
@@ -120,7 +120,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
       console.error(err);
 
       if (err?.response?.unauthorized || err?.response?.forbidden) {
-        localStorage.removeItem('simple_kanban_token');
+        localStorage.removeItem('simplekanban_token');
         dispatch({ type: 'START_LOGOUT_USER' });
       }
 

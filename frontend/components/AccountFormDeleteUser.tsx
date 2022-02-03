@@ -49,13 +49,13 @@ class AccountFormDeleteUser extends Component<Props, State> {
     const { form } = this.state;
 
     try {
-      const token = localStorage.getItem('simple_kanban_token');
+      const token = localStorage.getItem('simplekanban_token');
       await request
         .delete(`/users/${this.props.user?.user_slug}/`)
         .set({ 'Authorization': `Token ${token}` })
         .send({ ...form });
       this.setState({ form: { email: '', current_password: '' } });
-      localStorage.removeItem('simple_kanban_token');
+      localStorage.removeItem('simplekanban_token');
       if (this.component.current) enableBodyScroll(this.component.current);
       this.props.successDeleteUser();
       mutate('/users/');
@@ -67,7 +67,7 @@ class AccountFormDeleteUser extends Component<Props, State> {
       err = err?.response;
 
       if (err?.unauthorized || err?.forbidden || err?.notFound) {
-        localStorage.removeItem('simple_kanban_token');
+        localStorage.removeItem('simplekanban_token');
         if (this.component.current) enableBodyScroll(this.component.current);
         this.props.startLogoutUser();
       }
