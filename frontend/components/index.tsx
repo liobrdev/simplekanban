@@ -13,7 +13,6 @@ export { default as BoardListMessages } from './BoardListMessages';
 export { default as BoardMember } from './BoardMember';
 export { default as BoardMessage } from './BoardMessage';
 export { default as BoardMessageForm } from './BoardMessageForm';
-export { default as BoardModal } from './BoardModal';
 export { default as BoardOptions } from './BoardOptions';
 export { default as BoardRetrieveBoard } from './BoardRetrieveBoard';
 export { default as BoardTask } from './BoardTask';
