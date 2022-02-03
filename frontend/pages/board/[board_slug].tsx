@@ -13,11 +13,11 @@ import { mutate } from 'swr';
 import {
   BoardListColumns,
   BoardOptions,
-  BoardModal,
   BoardRetrieveBoard,
   BoardTitle,
   LeftArrowIcon,
   LoadingView,
+  Modal,
 } from '@/components';
 
 import {
@@ -165,19 +165,19 @@ class Board extends Component<Props> {
   inviteSent(message: any) {
     if (message && typeof message === 'string') {
       this.props.inviteFormClose();
-      this.props.boardModalShow({ message });
+      this.props.boardModalShow(message);
     } else throw new Error("Failed 'inviteSent'");
   }
 
   inviteNotSent(message: any) {
     if (message && typeof message === 'string') {
-      this.props.boardModalShow({ message });
+      this.props.boardModalShow(message);
     } else throw new Error("Failed 'inviteNotSent'");
   }
 
   boardDeleted(data: any) {
     if (data && typeof data === 'string') {
-      this.props.boardModalShow({ message: data });
+      this.props.boardModalShow(data);
       this.setTimeoutRedirect();
     } else throw new Error("Failed 'boardDeleted'");
   }
@@ -186,14 +186,14 @@ class Board extends Component<Props> {
     if (typeof error?.message === 'string') {
       this.props.setUserRole();
       this.props.successReadBoard();
-      this.props.boardModalShow({ message: error.message });
+      this.props.boardModalShow(error.message);
       this.setTimeoutRedirect();
     } else throw new Error("Failed 'authFailed'");
   }
 
   boardError(error: any) {
     if (typeof error?.message === 'string') {
-      this.props.boardModalShow({ message: error.message });
+      this.props.boardModalShow(error.message);
     } else throw new Error("Failed 'boardError'");
   }
 
@@ -277,7 +277,7 @@ class Board extends Component<Props> {
     this.props.setUserRole();
     this.props.successReadBoard();
     const message = e.error?.message || e.message || 'Oops! Something went wrong.';
-    this.props.boardModalShow({ message });
+    this.props.boardModalShow(message);
   }
 
   componentDidMount() {
@@ -329,9 +329,7 @@ class Board extends Component<Props> {
         this.props.memberFormClose();
         this.props.setUserRole();
         this.props.successReadBoard();
-        this.props.boardModalShow({
-          message: 'You may not view this project.',
-        });
+        this.props.boardModalShow('You may not view this project.');
         this.setTimeoutRedirect();
       }
     }
@@ -346,6 +344,7 @@ class Board extends Component<Props> {
   }
 
   render() {
+    const { boardModal } = this.props;
     const isLoading = !this.props.user || this.props.isReadingWs;
     const title = this.props.board?.board_title || 'Loading...';
     const { board_slug } = this.props.router.query;
@@ -365,7 +364,7 @@ class Board extends Component<Props> {
         {!!slug && <BoardRetrieveBoard slug={slug} />}
         {isLoading ? <LoadingView className='LoadingView--dashboard' /> : (
           <main className='Page Page--board'>
-            <BoardModal />
+            {!!boardModal && <Modal modal={boardModal} />}
             <div className={`LeftArrowIcon-container${
               this.props.boardForm ? ' is-hidden' : ''
             }`}>
@@ -462,7 +461,8 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
     dispatch({ type: 'SUCCESS_SAVE_TASKS', tasks });
   },
   // Other
-  boardModalShow: (boardModal: IModal) => {
+  boardModalShow: (message: string) => {
+    const boardModal: IModal = { page: 'board', message };
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
   },
   boardModalClose: () => {

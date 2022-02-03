@@ -37,7 +37,7 @@ export default function BoardTaskButtons({ column, disabled }: Props) {
       wsParams: { column_id: columnMenu?.column_id },
     };
     const rightButton: IButton = { action, text: 'Confirm' };
-    const boardModal: IModal = { message, rightButton };
+    const boardModal: IModal = { page: 'board', message, rightButton };
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
   };
   

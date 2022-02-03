@@ -93,7 +93,7 @@ export default function BoardMember({ membership }: Props) {
       wsCommand: BoardCommands.DELETE_BOARD,
     };
     const rightButton: IButton = { action, text: 'Confirm' };
-    const boardModal: IModal = { message, rightButton };
+    const boardModal: IModal = { page: 'board', message, rightButton };
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
   };
 
@@ -105,7 +105,7 @@ export default function BoardMember({ membership }: Props) {
       wsCommand: BoardCommands.LEAVE,
     };
     const rightButton: IButton = { action, text: 'Confirm' };
-    const boardModal: IModal = { message, rightButton };
+    const boardModal: IModal = { page: 'board', message, rightButton };
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
   };
 
@@ -120,7 +120,7 @@ export default function BoardMember({ membership }: Props) {
     };
     const message = `Remove ${display_name} from board room?`;
     const rightButton: IButton = { action, text: 'Confirm' };
-    const boardModal: IModal = { message, rightButton };
+    const boardModal: IModal = { page: 'board', message, rightButton };
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
   };
 
