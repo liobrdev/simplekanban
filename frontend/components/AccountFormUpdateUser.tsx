@@ -81,7 +81,11 @@ export default function AccountFormUpdateUser({ user }: Props ) {
         dispatch({ type: 'START_LOGOUT_USER' });
       }
 
-      setError(parseErrorResponse(err?.response?.body, Object.keys(form)));
+      setError({
+        email: [
+          { id: 'verifyFail', msg: 'Failed to send verification email.' },
+        ],
+      });
     } finally {
       dispatch({ type: 'STOP_UPDATE_USER' });
     }
