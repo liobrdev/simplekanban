@@ -412,16 +412,16 @@ class AuthenticationTest(APITestCase):
     
     def test_forgot_password(self):
         # Successful request w/ existing user
-        user = create_user()
+        user_1 = create_user(dict(test_user_1, email_is_verified=True))
         response_1 = self.client.post(reverse('forgot_password'), data={
-            'email': user.email,
+            'email': user_1.email,
         })
         self.assertEqual(response_1.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
             mail.outbox[0].subject, 'Reset password for SimpleKanban account')
-        self.assertEqual(mail.outbox[0].to, [user.email])
+        self.assertEqual(mail.outbox[0].to, [user_1.email])
         print('\n')
         print(mail.outbox[0].body)
         print('\n')
@@ -438,7 +438,7 @@ class AuthenticationTest(APITestCase):
 
         # Already requested w/ existing user, no additional email
         response_2 = self.client.post(reverse('forgot_password'), data={
-            'email': user.email,
+            'email': user_1.email,
         })
         self.assertEqual(response_2.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
@@ -452,20 +452,29 @@ class AuthenticationTest(APITestCase):
         self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
         self.assertEqual(len(mail.outbox), 1)
 
+        # Non-verified user, successful request but no email
+        user_2 = create_user(test_user_2)
+        response_4 = self.client.post(reverse('forgot_password'), data={
+            'email': user_2.email,
+        })
+        self.assertEqual(response_4.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(PasswordRecoveryToken.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+
         # Test create new token and new email after 10 minute have passed
         now = datetime.now()
         freezer = freeze_time(timedelta(minutes=10))
         freezer.start()
         self.assertAlmostEqual(datetime.now().timestamp(), now.timestamp() + 600, 3)
-        response_4 = self.client.post(reverse('forgot_password'), data={
-            'email': user.email,
+        response_5 = self.client.post(reverse('forgot_password'), data={
+            'email': user_1.email,
         })
-        self.assertEqual(response_4.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response_5.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(PasswordRecoveryToken.objects.count(), 2)
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(
             mail.outbox[1].subject, 'Reset password for SimpleKanban account')
-        self.assertEqual(mail.outbox[1].to, [user.email])
+        self.assertEqual(mail.outbox[1].to, [user_1.email])
         self.assertIn(email_substring, mail.outbox[1].body)
         reset_password_token_2 = re.search(
             re.escape(email_substring) + r'([\w-]{64})',

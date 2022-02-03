@@ -54,7 +54,7 @@ class VerifyEmail extends Component<Props, State> {
     return (
       <>
         <Head>
-          <title>Verify Email - SimplePasswords</title>
+          <title>Verify Email - SimpleKanban</title>
           <meta name='robots' content='noindex, nofollow' />
         </Head>
         <LoadingView />

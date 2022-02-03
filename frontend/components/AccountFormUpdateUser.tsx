@@ -208,6 +208,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
         onChange={handleInput()}
         required
         showAsterisk
+        showObelisk
       />
       {error?.email?.map(
         e => <p key={e.id} className='AccountFormUpdateUser-error'>{e.msg}</p>
@@ -267,8 +268,16 @@ export default function AccountFormUpdateUser({ user }: Props ) {
         e => <p key={e.id} className='AccountFormUpdateUser-error'>{e.msg}</p>
       )}
       <br/>
-      <p className='AccountFormUpdateUser-text'>
+      <p className='AccountFormUpdateUser-text AccountFormUpdateUser-text--asterisk'>
         <span>*</span>&nbsp;Required
+      </p>
+      <p className='AccountFormUpdateUser-text AccountFormUpdateUser-text--obelisk'>
+        <span>&dagger;&nbsp;</span>
+        Email address must be verified in order to enable
+        &nbsp;<b>account recovery</b> in the event that your
+        password is lost or forgotten. This is optional, but
+        strongly-recommended for the security of your account.
+        If email address is changed, it will need to be verified again.
       </p>
       <br/>
       <button

@@ -1,4 +1,6 @@
 import logging
+import random
+import time
 
 from datetime import timedelta
 from django.contrib.auth import get_user_model, login, logout
@@ -169,7 +171,8 @@ class ForgotPasswordAPI(APIView):
         except User.DoesNotExist:
             user = None
 
-        if not user or not user.is_active:
+        if not user or not user.is_active or not user.email_is_verified:
+            time.sleep(random.normalvariate(1.5, 0.25))
             return Response(None, status=status.HTTP_204_NO_CONTENT)
 
         try:

@@ -11,6 +11,15 @@
       right: 1px;
     }
 
+    &-obelisk {
+      color: $berry;
+      position: absolute;
+      font-weight: 500;
+      font-size: 14px;
+      top: -1px;
+      left: 121px;
+    }
+
     label {
       display: block;
       font-weight: 500;
@@ -90,13 +99,23 @@
   }
 
   &-text {
-    span {
-      color: red;
+    &--asterisk {
+      span {
+        color: red;
+      }
+    }
+
+    &--obelisk {
+      text-align: justify;
+
+      span {
+        color: $berry;
+      }
     }
   }
 
   &-verified {
-    &--email, &--phone {
+    &--email {
       float: right;
       color: $palered;
       text-transform: none;
