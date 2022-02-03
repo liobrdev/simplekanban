@@ -2,6 +2,9 @@ export enum AuthCommands {
   LOGIN = 'login',
   LOGOUT = 'logout',
   REGISTER = 'register',
+  FORGOT_PW = 'forgot_password',
+  RESET_PW = 'reset_password',
+  VERIFY_EMAIL = 'verify_email',
 }
 
 export enum BoardCommands {
