@@ -12,6 +12,7 @@ from utils.models import CustomBaseMixin, generate_slug
 class CustomUser(AbstractUser, CustomBaseMixin):
     email = EmailField(_('email address'), blank=False)
     name = CharField(_('name'), max_length=255, blank=False)
+    email_is_verified = BooleanField(default=False)
     user_slug = SlugField(
         _('user slug'), primary_key=True, unique=True, editable=False,)
     has_beta_account = BooleanField(_('has beta account'), default=False)
@@ -47,6 +48,9 @@ class CustomUser(AbstractUser, CustomBaseMixin):
     def save(self, *args, **kwargs):
         if not self.user_slug:
             self.user_slug = generate_slug()
+
+        if not self.email:
+            self.email_is_verified = False
 
         try:
             super().save(*args, **kwargs)

@@ -46,7 +46,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
 
   const handleReset = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setForm({ ...initialForm, ...user });
+    setForm({ ...initialForm });
     setError({});
     window.scrollTo(0, 0);
     (document.activeElement as HTMLElement).blur();
@@ -58,7 +58,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
     setError({});
 
     try {
-      const token = localStorage.getItem('simplepasswords_token');
+      const token = localStorage.getItem('simple_kanban_token');
       await request
         .get('/auth/verify_email/')
         .set({ 'Authorization': `Token ${token}` })
@@ -77,7 +77,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
       console.error(err);
 
       if (err?.response?.unauthorized || err?.response?.forbidden) {
-        localStorage.removeItem('simplepasswords_token');
+        localStorage.removeItem('simple_kanban_token');
         dispatch({ type: 'START_LOGOUT_USER' });
       }
 
@@ -97,7 +97,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
     setError({});
 
     try {
-      const token = localStorage.getItem('simplepasswords_token');
+      const token = localStorage.getItem('simple_kanban_token');
       const data = await request
         .patch(`/users/${user.user_slug}/`)
         .set({ 'Authorization': `Token ${token}` })
@@ -120,7 +120,7 @@ export default function AccountFormUpdateUser({ user }: Props ) {
       console.error(err);
 
       if (err?.response?.unauthorized || err?.response?.forbidden) {
-        localStorage.removeItem('simplepasswords_token');
+        localStorage.removeItem('simple_kanban_token');
         dispatch({ type: 'START_LOGOUT_USER' });
       }
 

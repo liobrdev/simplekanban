@@ -1,8 +1,8 @@
 from django.urls import re_path
 
 from authentication.api import (
-    LoginAPI, LogoutAPI, RegistrationAPI,
-    ForgotPasswordAPI, ResetPasswordAPI,)
+    LoginAPI, LogoutAPI, RegistrationAPI, ForgotPasswordAPI, ResetPasswordAPI,
+    VerifyEmailAPI,)
 
 
 urlpatterns = [
@@ -19,4 +19,7 @@ urlpatterns = [
         ResetPasswordAPI.as_view(),
         name='reset_password',
     ),
+    re_path(
+        r'^auth/verify_email/$', VerifyEmailAPI.as_view(),
+        name='verify_email',),
 ]

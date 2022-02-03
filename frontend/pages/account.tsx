@@ -54,7 +54,7 @@ class Account extends Component<Props> {
 
   async handleEmailVerification(email_token: string) {
     try {
-      const auth_token = localStorage.getItem('simplepasswords_token');
+      const auth_token = localStorage.getItem('simple_kanban_token');
       await request
         .post('/auth/verify_email/')
         .set({ 'Authorization': `Token ${auth_token}` })

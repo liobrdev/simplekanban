@@ -253,12 +253,14 @@ export const checkUser = (user: any, res?: any): IUser => {
     !!user &&
     !!user.user_slug && typeof user.user_slug === 'string' &&
     !!user.name && typeof user.name === 'string' &&
-    !!user.email && typeof user.email === 'string'
+    !!user.email && typeof user.email === 'string' &&
+    typeof user.email_is_verified === 'boolean'
   ) {
     const obj: IUser = {
       user_slug: user.user_slug,
       name: user.name,
       email: user.email,
+      email_is_verified: user.email_is_verified,
     };
 
     return obj;

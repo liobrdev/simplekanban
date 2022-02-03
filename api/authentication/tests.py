@@ -13,7 +13,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from authentication.invalid_login import InvalidLoginCache
-from authentication.models import PasswordRecoveryToken
+from authentication.models import EmailVerificationToken, PasswordRecoveryToken
 from authentication.utils import AuthCommands
 from custom_db_logger.models import StatusLog
 from custom_db_logger.utils import LogLevels
@@ -348,6 +348,76 @@ class AuthenticationTest(APITestCase):
         self.assertRegex(response.data['token'], r'^[\w-]{64}$')
         freezer.stop()
         self.assertEqual(StatusLog.objects.using('logger').count(), 1)
+
+    def test_email_verification(self):
+        user = create_user(test_user_2)
+        login_1 = self.client.post(reverse('login'), data={
+            'email': user.email,
+            'password': test_user_2['password'],
+        })
+        self.assertEqual(login_1.status_code, status.HTTP_200_OK)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {login_1.data['token']}")
+        get_1 = self.client.get(reverse('verify_email'))
+        self.assertEqual(get_1.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(EmailVerificationToken.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Verify your email address')
+        self.assertEqual(mail.outbox[0].to, [user.email])
+        print('\n')
+        print(mail.outbox[0].body)
+        print('\n')
+        protocol = 'http'
+        if not settings.DEBUG:
+            protocol += 's'
+        email_substring = f'{protocol}://{settings.DOMAIN}/verify_email?token='
+        self.assertIn(email_substring, mail.outbox[0].body)
+        email_token_1 = re.search(
+            re.escape(email_substring) + r'([\w-]{64})', mail.outbox[0].body,
+        ).group(1)
+        self.assertIsInstance(email_token_1, str)
+
+        # Already requested verification, no additional email
+        get_2 = self.client.get(reverse('verify_email'))
+        self.assertEqual(get_2.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(EmailVerificationToken.objects.count(), 1)
+        self.assertEqual(len(mail.outbox), 1)
+
+        # Test create new token and new email after 10 minutes have passed
+        now = datetime.now()
+        freezer = freeze_time(timedelta(days=7))
+        freezer.start()
+        self.assertAlmostEqual(
+            datetime.now().timestamp(), now.timestamp() + (60 * 60 * 24 * 7), 3,)
+        self.client.credentials(HTTP_AUTHORIZATION='')
+        login_2 = self.client.post(reverse('login'), data={
+            'email': user.email,
+            'password': test_user_2['password'],
+        })
+        self.assertEqual(login_2.status_code, status.HTTP_200_OK)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {login_2.data['token']}")
+        get_3 = self.client.get(reverse('verify_email'))
+        self.assertEqual(get_3.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(EmailVerificationToken.objects.count(), 2)
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[1].subject, 'Verify your email address')
+        self.assertEqual(mail.outbox[1].to, [user.email])
+        self.assertIn(email_substring, mail.outbox[1].body)
+        email_token_2 = re.search(
+            re.escape(email_substring) + r'([\w-]{64})', mail.outbox[1].body,
+        ).group(1)
+        self.assertIsInstance(email_token_2, str)
+        self.assertNotEqual(email_token_1, email_token_2)
+
+        # POST verification token
+        self.assertFalse(user.email_is_verified)
+        post_1 = self.client.post(reverse('verify_email'), data={
+            'token': email_token_2,
+        })
+        self.assertEqual(post_1.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(EmailVerificationToken.objects.count(), 0)
+        user.refresh_from_db()
+        self.assertTrue(user.email_is_verified)
+        freezer.stop()
     
     def test_forgot_password(self):
         # Successful request w/ existing user

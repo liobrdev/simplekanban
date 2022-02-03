@@ -7,3 +7,4 @@ class AuthCommands(TextChoices):
     REGISTER = 'register'
     FORGOT_PW = 'forgot_password'
     RESET_PW = 'reset_password'
+    VERIFY_EMAIL = 'verify_email'

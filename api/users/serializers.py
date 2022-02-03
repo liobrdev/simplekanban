@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class ReadOnlyUserSerializer(ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['user_slug', 'name', 'email']
-        read_only_fields = ['user_slug', 'name', 'email']
+        fields = ['user_slug', 'name', 'email', 'email_is_verified']
+        read_only_fields = ['user_slug', 'name', 'email', 'email_is_verified']
 
 
 class UserSerializer(ModelSerializer):
@@ -38,8 +38,9 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = (
-            'user_slug', 'name', 'email',
-            'password', 'password_2', 'current_password',)
+            'user_slug', 'name', 'email', 'email_is_verified', 'password',
+            'password_2', 'current_password',)
+        read_only_fields = ('user_slug', 'email_is_verified',)
 
     def validate_password(self, password): 
         request = self.context['request']
@@ -64,13 +65,19 @@ class UserSerializer(ModelSerializer):
         raise ValidationError('Invalid password.')
 
     def save(self):
+        current_password = self.validated_data.pop('current_password')
+
         request = self.context['request']
         user = request.user
         user.name = self.validated_data.get('name', user.name)
-        user.email = self.validated_data.get('email', user.email)
+
+        email = self.validated_data.get('email', None)
         password = self.validated_data.get('password', None)
         password_2 = self.validated_data.get('password_2', None)
-        current_password = self.validated_data.pop('current_password')
+
+        if email is not None and email != user.email:
+            user.email = email
+            user.email_is_verified = False
 
         if password:
             if not password_2 or password_2 != password:

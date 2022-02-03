@@ -127,3 +127,7 @@ class ResetPasswordSerializer(Serializer):
 
         if not validate_password(password):
             return dict(email=email, password=password, token=token)
+
+
+class VerificationSerializer(Serializer):
+    token = CharField(write_only=True)

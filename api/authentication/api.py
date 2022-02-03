@@ -5,30 +5,26 @@ from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.signals import user_logged_out
 from django.utils import timezone
 
-from knox.settings import CONSTANTS, knox_settings
+from knox.settings import CONSTANTS
 from knox.views import LoginView, LogoutView
 
 from rest_framework import status
 from rest_framework.exceptions import (
-    AuthenticationFailed,
-    PermissionDenied,
-    Throttled,
-    ValidationError,)
-from rest_framework.permissions import AllowAny
+    AuthenticationFailed, PermissionDenied, Throttled, ValidationError,)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.invalid_login import InvalidLoginCache
-from authentication.models import PasswordRecoveryToken
+from authentication.models import EmailVerificationToken, PasswordRecoveryToken
 from authentication.reset_password import (
-    send_reset_password_email,
-    check_reset_token,)
+    send_reset_password_email, check_reset_token,)
 from authentication.serializers import (
-    LoginSerializer,
-    RegistrationSerializer,
-    ForgotPasswordSerializer,
-    ResetPasswordSerializer,)
+    LoginSerializer, RegistrationSerializer, ForgotPasswordSerializer,
+    ResetPasswordSerializer, VerificationSerializer,)
 from authentication.utils import AuthCommands
+from authentication.verification import (
+    send_verification_email, check_verification_token,)
 from users.exceptions import DuplicateEmail, DuplicateSuperUser
 from utils import parse_request_metadata
 from utils.exceptions import RequestError
@@ -41,11 +37,6 @@ User = get_user_model()
 
 class LoginAPI(LoginView):
     permission_classes = (AllowAny,)
-
-    def get_token_ttl(self):
-        if self.request.user_agent.is_mobile:
-            return None
-        return knox_settings.TOKEN_TTL
 
     def post(self, request, format=None):
         try:
@@ -232,3 +223,74 @@ class ResetPasswordAPI(APIView):
         token.delete()
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+
+class VerifyEmailAPI(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        try:
+            if throttle_command(
+                AuthCommands.VERIFY_EMAIL, request.META['CLIENT_IP'], request,
+            ):
+                raise Throttled()
+            try:
+                token = EmailVerificationToken.objects.filter(
+                    user=request.user, expiry__gt=timezone.now(),
+                ).latest('expiry')
+            except EmailVerificationToken.DoesNotExist:
+                user = request.user
+                token = EmailVerificationToken.objects.create(
+                    user=user, expiry=timedelta(days=7),)
+                send_verification_email(user.email, user.name, token[1])
+        except Throttled as e:
+            raise e
+        except Exception as e:
+            logger.exception(
+                'Email verification error - GET', exc_info=e, extra={
+                    'client_ip': request.META['CLIENT_IP'],
+                    'command': AuthCommands.VERIFY_EMAIL,
+                    'metadata': parse_request_metadata(request),
+                },)
+            raise RequestError()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request, format=None):
+        try:
+            if throttle_command(
+                AuthCommands.VERIFY_EMAIL, request.META['CLIENT_IP'], request,
+            ):
+                raise Throttled()
+
+            user = request.user
+            if user.email_is_verified:
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+            token_string = ''
+            serializer = VerificationSerializer(data=request.data)
+            if serializer.is_valid():
+                token_string = serializer.validated_data['token']
+
+            try:
+                check_verification_token(
+                    AuthCommands.VERIFY_EMAIL, request.user, token_string,)
+            except:
+                msg = "Oops, failed to verify your email address! " \
+                    "Perhaps the email link is no longer valid."
+                raise PermissionDenied(msg)
+
+            user.email_is_verified = True
+            user.save()
+            user.email_verification_tokens.all().delete()
+
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except (PermissionDenied, Throttled) as e:
+            raise e
+        except Exception as e:
+            logger.exception(
+                'Email verification error - POST', exc_info=e, extra={
+                    'client_ip': request.META['CLIENT_IP'],
+                    'command': AuthCommands.VERIFY_EMAIL,
+                    'metadata': parse_request_metadata(request),
+                },)
+            raise RequestError()
