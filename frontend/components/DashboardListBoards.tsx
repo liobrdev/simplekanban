@@ -6,7 +6,12 @@ import { debounce } from 'lodash';
 
 import { AppDispatch, AppState } from '@/types';
 
-import { BoardThumb, DashboardRetrieveBoards, LoadingView } from './';
+import {
+  BoardThumb,
+  DashboardListEmpty,
+  DashboardRetrieveBoards,
+  LoadingView,
+} from './';
 
 
 class DashboardListBoards extends Component<Props> {
@@ -45,12 +50,7 @@ class DashboardListBoards extends Component<Props> {
                 ))}
               </ul>
             )}
-            {!errorRetrieve && !hasBoards && (
-              <p className='DashboardListBoards-message'>
-                You don&apos;t have any boards at the moment.
-                Tap <span>+</span> to create one!
-              </p>
-            )}
+            {!errorRetrieve && !hasBoards && <DashboardListEmpty />}
             {!!errorRetrieve && (
               <div className='DashboardListBoards-error'>
                 <p className='DashboardListBoards-error-message'>
