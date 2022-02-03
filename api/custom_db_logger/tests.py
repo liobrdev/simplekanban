@@ -8,7 +8,6 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from authentication.invalid_login import InvalidLoginCache
 from custom_db_logger.models import StatusLog
 from custom_db_logger.serializers import StatusLogSerializer
 from custom_db_logger.utils import LogLevels

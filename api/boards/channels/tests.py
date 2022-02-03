@@ -7,13 +7,13 @@ from channels.db import database_sync_to_async
 from channels.testing import WebsocketCommunicator
 from django.conf import settings
 from django.core import mail
-from django.core.cache import cache
 from django.test import TransactionTestCase, override_settings
+from django_redis import get_redis_connection
+
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from authentication.invalid_login import InvalidLoginCache
 from boards.channels import actions
 from boards.channels.utils import ChannelCodes
 from boards.models import Board, BoardMembership
@@ -24,11 +24,9 @@ from custom_db_logger.serializers import StatusLogSerializer
 from custom_db_logger.utils import LogLevels
 from simplekanban_api.websocket_router import application
 from users.serializers import ReadOnlyUserSerializer
-from utils import COMMAND_VALUES
 from utils.testing import (
-    create_board, create_user, log_msg_regex,
-    test_user_1, test_user_2, test_user_3, test_user_4,)
-from utils.throttling import THROTTLE_RATES
+    create_board, create_user, log_msg_regex, test_user_2, test_user_3,
+    test_user_4,)
 
 
 TEST_CHANNEL_LAYERS = {
@@ -42,29 +40,7 @@ class TestWebsockets(TransactionTestCase):
     databases = '__all__'
 
     def tearDown(self):
-        InvalidLoginCache.delete(test_user_1['email'])
-        InvalidLoginCache.delete(test_user_2['email'])
-        InvalidLoginCache.delete(test_user_3['email'])
-        InvalidLoginCache.delete(test_user_4['email'])
-
-        for command in COMMAND_VALUES + ['invalid_command']:
-            try:
-                throttle_rates = THROTTLE_RATES[command]
-            except KeyError:
-                try:
-                    throttle_rates = THROTTLE_RATES['default']
-                except KeyError:
-                    throttle_rates = ['120/m']
-
-            for rate in throttle_rates:
-                rate_string = rate.replace('/', '_')
-                cache.delete(f'throttle_{command}_127.0.0.1_{rate_string}')
-                cache.delete(f'throttle_{command}_123.255.245.33_{rate_string}')
-                cache.delete(f"throttle_{command}_{test_user_1['email']}_{rate_string}")
-                cache.delete(f"throttle_{command}_{test_user_2['email']}_{rate_string}")
-                cache.delete(f"throttle_{command}_{test_user_3['email']}_{rate_string}")
-                cache.delete(f"throttle_{command}_{test_user_4['email']}_{rate_string}")
-
+        get_redis_connection('default').flushall()
 
     @override_settings(CHANNEL_LAYERS=TEST_CHANNEL_LAYERS)
     async def test_fail_invalid_commands(self):
