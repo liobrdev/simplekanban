@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
-from django.core.cache import cache
+from django_redis import get_redis_connection
 
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -21,14 +21,7 @@ class UserAccountTest(APITestCase):
         self.user_2 = create_user(test_user_2)
 
     def tearDown(self):
-        cache.delete('throttle_login_127.0.0.1_15_m')
-        cache.delete(f"throttle_login_{test_user_1['email']}_15_m")
-        cache.delete('throttle_login_127.0.0.1_60_d')
-        cache.delete(f"throttle_login_{test_user_1['email']}_60_d")
-        cache.delete('throttle_update_user_127.0.0.1_120_m')
-        cache.delete(f"throttle_update_user_{test_user_1['email']}_120_m")
-        cache.delete('throttle_deactivate_account_127.0.0.1_120_m')
-        cache.delete(f"throttle_deactivate_account_{test_user_1['email']}_120_m")
+        get_redis_connection('default').flushall()
 
     def test_user_update_fail_missing_password(self):
         login = self.client.post(reverse('login'), data={

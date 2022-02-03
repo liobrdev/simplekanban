@@ -3,7 +3,7 @@ import re
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
-from django.core.cache import cache
+from django_redis import get_redis_connection
 
 from datetime import datetime, timedelta
 from freezegun import freeze_time
@@ -24,16 +24,7 @@ class AuthenticationTest(APITestCase):
     databases = '__all__'
 
     def tearDown(self):
-        InvalidLoginCache.delete(test_user_1['email'])
-        InvalidLoginCache.delete(test_user_2['email'])
-        cache.delete('throttle_login_127.0.0.1_15_m')
-        cache.delete(f"throttle_login_{test_user_1['email']}_15_m")
-        cache.delete('throttle_register_127.0.0.1_15_m')
-        cache.delete(f"throttle_register_{test_user_1['email']}_15_m")
-        cache.delete('throttle_login_127.0.0.1_60_d')
-        cache.delete(f"throttle_login_{test_user_1['email']}_60_d")
-        cache.delete('throttle_register_127.0.0.1_60_d')
-        cache.delete(f"throttle_register_{test_user_1['email']}_60_d")
+        get_redis_connection('default').flushall()
 
     def test_register_fail_missing_info(self):
         res_fail = self.client.post(reverse('register'), data={})

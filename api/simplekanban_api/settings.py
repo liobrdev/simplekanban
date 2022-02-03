@@ -241,7 +241,12 @@ CORS_ALLOWED_ORIGIN_REGEXES = [CORS_ALLOWED_ORIGIN_REGEX,]
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://' + config('REDIS_HOST') + ':6379',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': secrets.REDIS_PASSWORD
+        }
     }
 }
 

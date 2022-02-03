@@ -1,10 +1,8 @@
 import logging
-from pprint import pprint
-import re
 
 from django.conf import settings
 from django.core import mail
-from django.core.cache import cache
+from django_redis import get_redis_connection
 
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -29,17 +27,7 @@ class DatabaseLoggerTest(APITestCase):
         self.logger = logging.getLogger('db_logger')
 
     def tearDown(self):
-        InvalidLoginCache.delete(test_user_1['email'])
-        cache.delete('throttle_login_127.0.0.1_15_m')
-        cache.delete(f"throttle_login_{test_user_1['email']}_15_m")
-        cache.delete('throttle_register_127.0.0.1_15_m')
-        cache.delete(f"throttle_register_{test_user_1['email']}_15_m")
-        cache.delete('throttle_login_127.0.0.1_60_d')
-        cache.delete(f"throttle_login_{test_user_1['email']}_60_d")
-        cache.delete('throttle_register_127.0.0.1_60_d')
-        cache.delete(f"throttle_register_{test_user_1['email']}_60_d")
-        cache.delete('throttle_update_user_127.0.0.1_120_m')
-        cache.delete(f"throttle_update_user_{test_user_1['email']}_120_m")
+        get_redis_connection('default').flushall()
 
     def test_exception(self):
         exc_message = 'Exception Message!'
