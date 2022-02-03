@@ -39,7 +39,7 @@
       margin-top: 0;
       margin-bottom: 0;
       padding: 30px;
-      color: $berry;
+      color: $red;
       letter-spacing: 2px;
       font-size: 18px;
       font-family: $fontSecondary;
@@ -57,7 +57,7 @@
         padding: 10px;
         outline: none;
         border: none;
-        color: $berry;
+        color: $red;
         background-color: white;
         font-size: 13px;
         letter-spacing: 1px;
@@ -71,7 +71,7 @@
         &:hover,
         &:focus {
           cursor: pointer;
-          background-color: $berry;
+          background-color: $red;
           color: white;
         }
 
@@ -80,7 +80,7 @@
         }
   
         &:nth-of-type(2) {
-          border-left: 0.5px solid $berry;
+          border-left: 0.5px solid $red;
           border-bottom-right-radius: 2px;
         }
       }
