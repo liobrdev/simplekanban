@@ -59,6 +59,7 @@ class ForgotPassword extends Component<Props> {
         <Head>
           <title>Forgot Password - SimpleKanban</title>
           <link rel="canonical" href="https://simplekanban.app/login" />
+          <meta name='robots' content='noindex, nofollow' />
           <script type="application/ld+json">{breadcrumb}</script>
         </Head>
         <main className='Page Page--forgotPassword'>
