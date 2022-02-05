@@ -11,8 +11,11 @@ import { AppState } from '@/types';
 
 
 class VerifyEmail extends Component<Props, State> {
+  private verificationTimeout?: ReturnType<typeof setTimeout>;
+
   constructor(props: Props) {
     super(props);
+    this.verificationTimeout = undefined;
     this.state = { token: '' };
   }
 
@@ -25,6 +28,10 @@ class VerifyEmail extends Component<Props, State> {
         this.setState({ token });
       }
     }
+
+    this.verificationTimeout = setTimeout(() => {
+      router.replace('/login');
+    }, 4000);
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -48,6 +55,10 @@ class VerifyEmail extends Component<Props, State> {
         router.replace(`/login?email_token=${token}`);
       }
     }
+  }
+
+  componentWillUnmount() {
+    if (this.verificationTimeout) clearTimeout(this.verificationTimeout);
   }
 
   render() {

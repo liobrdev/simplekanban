@@ -1,21 +1,20 @@
 import React, { Component, MouseEvent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
+import isEmpty from 'lodash/isEmpty';
+
 import Head from 'next/head';
 import Link from 'next/link';
 import { withRouter, NextRouter } from 'next/router';
 
 import { LeftArrowIcon, LoadingView, RegisterForm } from '@/components';
 import { AppState, IBreadcrumbListItem } from '@/types';
-import { getInviteQueryString } from '@/utils';
 
 
-class Register extends Component<Props> {
-  private queryString?: ReturnType<typeof getInviteQueryString>;
-
+class Register extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.queryString = getInviteQueryString(props.router.query);
+    this.state = { board: '', token: '', email: '', willLogIn: false };
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -24,28 +23,70 @@ class Register extends Component<Props> {
     this.props.router.push('/');
   };
 
+  componentDidMount() {
+    const { router, user } = this.props;
+
+    if (!isEmpty(router.query)) {
+      const { board, token, email } = router.query;
+
+      if (
+        typeof board === 'string' &&
+        typeof token === 'string' &&
+        typeof email === 'string'
+      ) {
+        this.setState({ board, token, email });
+      }
+    }
+
+    if (user) this.setState({ willLogIn: true });
+  }
+
   componentDidUpdate(prevProps: Props) {
-    // If logged in
-    if (this.props.user) {
+    const { router, user } = this.props;
+
+    // If invitation query params are available, handle them
+    if (isEmpty(prevProps.router.query) && !isEmpty(router.query)) {
+      const { board, token, email } = router.query;
+
+      if (
+        typeof board === 'string' &&
+        typeof token === 'string' &&
+        typeof email === 'string'
+      ) {
+        return this.setState({ board, token, email });
+      }
+    }
+    
+    // Once logged in
+    if (user) {
+      const { board, token, email } = this.state;
+
       // If coming from invitation page
-      if (this.queryString) {
+      if (board && token && email) {
         // Redirect back to invitation page while logged in
-        this.props.router.replace(`/invitation${this.queryString}`);
+        router.replace(
+          `/invitation?board=${board}&token=${token}&email=${email}`);
       } else {
         // Otherwise redirect to dashboard
-        this.props.router.replace('/dashboard');
+        router.replace('/dashboard');
       }
     }
   }
 
   render() {
-    let headerText = 'Register';
-    let invite_email = '';
+    const { router, user } = this.props;
+    const { board, token, email } = this.state;
 
-    if (this.queryString) {
+    let headerText = 'Register';
+    let inviteEmail = '';
+    let inviteParams = '';
+
+    if (board && token && email) {
       headerText = 'Create an account to accept invitation';
-      if (typeof this.props.router.query.email === 'string') {
-        invite_email = decodeURIComponent(this.props.router.query.email);
+      inviteParams = `?board=${board}&token=${token}&email=${email}`;
+
+      if (typeof router.query.email === 'string') {
+        inviteEmail = decodeURIComponent(router.query.email);
       }
     }
 
@@ -70,7 +111,7 @@ class Register extends Component<Props> {
       "itemListElement": breadcrumbList
     });
 
-    return !!this.props.user ? <LoadingView /> : (
+    return !!user ? <LoadingView /> : (
       <>
         <Head>
           <title>Register - SimpleKanban</title>
@@ -87,10 +128,10 @@ class Register extends Component<Props> {
             />
           </div>
           <h2>{headerText}</h2>
-          <RegisterForm initial_email={invite_email} />
+          <RegisterForm initial_email={inviteEmail} />
           <span className='RegisterLink RegisterLink--login'>
             Already have an account?&nbsp;
-            <Link href={`/login${this.queryString}`}>
+            <Link href={`/login${inviteParams}`}>
               <a className='RegisterLink-link'>
                 Log in
               </a>
@@ -131,6 +172,13 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux {
   router: NextRouter;
+}
+
+interface State {
+  board: string;
+  token: string;
+  email: string;
+  willLogIn: boolean;
 }
 
 export default withRouter(connector(Register));

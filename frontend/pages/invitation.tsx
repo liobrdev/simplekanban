@@ -1,45 +1,80 @@
 import React, { Component } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
+import isEmpty from 'lodash/isEmpty';
+
 import Head from 'next/head';
 import { withRouter, NextRouter } from 'next/router';
 
 import { LoadingView } from '@/components';
 import { AppState } from '@/types';
-import { getInviteQueryString } from '@/utils';
 
 
 class Invitation extends Component<Props, State> {
+  private invitationTimeout?: ReturnType<typeof setTimeout>;
+
   constructor(props: Props) {
     super(props);
-    this.state = { retryCount: 0 };
+    this.invitationTimeout = undefined;
+    this.state = { board: '', token: '', email: '' };
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { router, user } = this.props;
-    let { retryCount } = this.state;
+  componentDidMount() {
+    const { router } = this.props;
 
-    const queryString = getInviteQueryString(router.query);
+    if (!isEmpty(router.query)) {
+      const { board, token, email } = router.query;
+
+      if (
+        typeof board === 'string' &&
+        typeof token === 'string' &&
+        typeof email === 'string'
+      ) {
+        this.setState({ board, token, email });
+      }
+    }
+
+    this.invitationTimeout = setTimeout(() => {
+      router.replace('/login');
+    }, 4000);
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { router, user } = this.props;
+
+    // If invitation query params are available, handle them
+    if (isEmpty(prevProps.router.query) && !isEmpty(router.query)) {
+      const { board, token, email } = router.query;
+
+      if (
+        typeof board === 'string' &&
+        typeof token === 'string' &&
+        typeof email === 'string'
+      ) {
+        this.setState({ board, token, email });
+      }
+    }
+
+    const { board, token, email } = this.state;
+
     // If there are valid invitation url params
-    if (queryString) {
+    if (
+      board !== prevState.board &&
+      token !== prevState.token &&
+      email !== prevState.email
+    ) {
       // If logged in go to board with invite_token param
       if (user) {
-        const { board, token } = router.query;
         router.replace(`/board/${board}?invite_token=${token}`);
       } else {
         // If not logged in, go to login page with invite params
-        router.replace(`/login${queryString}`);
-      }
-    } else {
-      // Otherwise just go to home page after 3 unsuccesful attempts
-      // to find valid query string parameters
-      if (retryCount >= 3) {
-        router.replace('/');
-      } else {
-        retryCount += 1;
-        this.setState({ retryCount });
+        router.replace(`/login?board=${board}&token=${token}&email=${email}`);
       }
     }
+  }
+
+  componentWillUnmount() {
+    if (this.invitationTimeout) clearTimeout(this.invitationTimeout);
   }
 
   render() {
@@ -68,7 +103,9 @@ interface Props extends PropsFromRedux {
 }
 
 interface State {
-  retryCount: number;
+  board: string;
+  token: string;
+  email: string;
 }
 
 export default withRouter(connector(Invitation));

@@ -1,21 +1,26 @@
 import React, { Component, MouseEvent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
+import isEmpty from 'lodash/isEmpty';
+
 import Head from 'next/head';
 import Link from 'next/link';
 import { withRouter, NextRouter } from 'next/router';
 
 import { LeftArrowIcon, LoadingView, LoginForm } from '@/components';
 import { AppState, IBreadcrumbListItem } from '@/types';
-import { getInviteQueryString } from '@/utils';
 
 
-class Login extends Component<Props> {
-  private queryString?: ReturnType<typeof getInviteQueryString>;
-
+class Login extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.queryString = getInviteQueryString(props.router.query);
+    this.state = {
+      board: '',
+      token: '',
+      email: '',
+      email_token: '',
+      willLogIn: false,
+    };
     this.handleBack = this.handleBack.bind(this);
   }
 
@@ -24,28 +29,77 @@ class Login extends Component<Props> {
     this.props.router.push('/');
   };
 
+  componentDidMount() {
+    const { router, user } = this.props;
+
+    if (!isEmpty(router.query)) {
+      const { board, token, email, email_token } = router.query;
+
+      if (
+        typeof board === 'string' &&
+        typeof token === 'string' &&
+        typeof email === 'string'
+      ) {
+        this.setState({ board, token, email });
+      } else if (typeof email_token === 'string') {
+        this.setState({ email_token });
+      }
+    }
+
+    if (user) this.setState({ willLogIn: true });
+  }
+
   componentDidUpdate(prevProps: Props) {
-    // If logged in
-    if (this.props.user) {
+    const { router, user } = this.props;
+
+    // If invitation query params are available, handle them
+    if (isEmpty(prevProps.router.query) && !isEmpty(router.query)) {
+      const { board, token, email, email_token } = router.query;
+
+      if (
+        typeof board === 'string' &&
+        typeof token === 'string' &&
+        typeof email === 'string'
+      ) {
+        return this.setState({ board, token, email });
+      } else if (typeof email_token === 'string') {
+        return this.setState({ email_token });
+      }
+    }
+    
+    // Once logged in
+    if (user) {
+      const { board, token, email, email_token } = this.state;
+
       // If coming from invitation page
-      if (this.queryString) {
+      if (board && token && email) {
         // Redirect back to invitation page while logged in
-        this.props.router.replace(`/invitation${this.queryString}`);
+        router.replace(
+          `/invitation?board=${board}&token=${token}&email=${email}`);
+      } else if (email_token) {
+        // Redirect back to email verification page while logged in
+        router.replace(`/verify_email?token=${email_token}`);
       } else {
         // Otherwise redirect to dashboard
-        this.props.router.replace('/dashboard');
+        router.replace('/dashboard');
       }
     }
   }
 
   render() {
-    let headerText = 'Log in';
-    let invite_email = '';
+    const { router, user } = this.props;
+    const { board, token, email } = this.state;
 
-    if (this.queryString) {
+    let headerText = 'Log in';
+    let inviteEmail = '';
+    let inviteParams = '';
+
+    if (board && token && email) {
       headerText = 'Log in to accept invitation';
-      if (typeof this.props.router.query.email === 'string') {
-        invite_email = decodeURIComponent(this.props.router.query.email);
+      inviteParams = `?board=${board}&token=${token}&email=${email}`;
+
+      if (typeof router.query.email === 'string') {
+        inviteEmail = decodeURIComponent(router.query.email);
       }
     }
 
@@ -70,7 +124,7 @@ class Login extends Component<Props> {
       "itemListElement": breadcrumbList
     });
     
-    return !!this.props.user ? <LoadingView /> : (
+    return !!user ? <LoadingView /> : (
       <>
         <Head>
           <title>Login - SimpleKanban</title>
@@ -86,10 +140,10 @@ class Login extends Component<Props> {
             />
           </div>
           <h2>{headerText}</h2>
-          <LoginForm initial_email={invite_email} />
+          <LoginForm initial_email={inviteEmail} />
           <span className='LoginLink LoginLink--register'>
             Don&apos;t have an account?&nbsp;
-            <Link href={`/register${this.queryString}`}>
+            <Link href={`/register${inviteParams}`}>
               <a className='LoginLink-link'>
                 Sign up
               </a>
@@ -135,6 +189,14 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux {
   router: NextRouter;
+}
+
+interface State {
+  board: string;
+  token: string;
+  email: string;
+  email_token: string;
+  willLogIn: boolean;
 }
 
 export default withRouter(connector(Login));
