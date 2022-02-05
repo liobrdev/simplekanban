@@ -51,7 +51,7 @@ class Invitation extends Component<Props, State> {
         typeof token === 'string' &&
         typeof email === 'string'
       ) {
-        this.setState({ board, token, email });
+        return this.setState({ board, token, email });
       }
     }
 
