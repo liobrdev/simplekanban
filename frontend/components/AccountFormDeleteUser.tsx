@@ -132,7 +132,7 @@ class AccountFormDeleteUser extends Component<Props, State> {
         )}
         <Input
           className='AccountFormDeleteUser-form-input'
-          label='Master password'
+          label='Password'
           type='password'
           name='current_password__deleteUser'
           value={form.current_password}
