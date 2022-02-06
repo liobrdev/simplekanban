@@ -66,7 +66,10 @@ class Board extends Component<Props> {
     const invite = `invite_token=${invite_token ? invite_token : ''}`;
     const pathname =
       `${wsScheme}://${wsHost}/ws/board/${board_slug}/?${auth}&${ip}&${invite}`;
-    this.rws = new ReconnectingWebSocket(pathname, [], { maxRetries: 2 });
+    this.rws = new ReconnectingWebSocket(pathname, [], {
+      maxRetries: 10,
+      debug: process.env.NODE_ENV !== 'production',
+    });
     this.rws.addEventListener('open', this.props.startReadBoard);
     this.rws.addEventListener('message', this.handleRwsMessage);
     this.rws.addEventListener('error', this.handleRwsError);
