@@ -5,7 +5,7 @@ api/.env
 api/secrets
 
 # certbot
-certbot/etc/letsencrypt/renewal-hooks
+/certbot
 
 # db
 db_default/var/lib/postgresql/data

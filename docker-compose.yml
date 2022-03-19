@@ -118,6 +118,7 @@ services:
     volumes:
       - ./certbot/var/www/certbot/:/var/www/certbot/:rw
       - ./certbot/etc/letsencrypt/:/etc/letsencrypt/:rw
+      - ./certbot/var/log/letsencrypt/:/var/log/letsencrypt/:rw
 secrets:
     aws_ses_key:
       file: ./secrets/aws_ses_key.txt
