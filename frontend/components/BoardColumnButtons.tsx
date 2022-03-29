@@ -47,20 +47,28 @@ export default function BoardTaskButtons({ column, disabled, isDemo }: Props) {
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
   };
   
-  const handleMove = (e: MouseEvent<HTMLButtonElement>, index: number) => {
+  const handleMove = (e: MouseEvent<HTMLButtonElement>, newIndex: number) => {
     e.preventDefault();
-    if (!column) return;
-    
-    const wsParams: IWebSocketParams = {
-      column_id: column.column_id,
-      column_index: index,
-    };
-    
-    dispatch({
-      type: 'START_WS_COMMAND',
-      wsCommand: BoardCommands.MOVE_COLUMN,
-      wsParams,
-    });
+
+    if (isDemo) {
+      dispatch({
+        type: 'COLUMN_MOVE',
+        columnId: column.column_id,
+        oldIndex: column.column_index,
+        newIndex,
+      });
+    } else {
+      const wsParams: IWebSocketParams = {
+        column_id: column.column_id,
+        column_index: newIndex,
+      };
+
+      dispatch({
+        type: 'START_WS_COMMAND',
+        wsCommand: BoardCommands.MOVE_COLUMN,
+        wsParams,
+      });
+    }
   };
 
   const buttonMoveColumnLeft = leftColumn ? (

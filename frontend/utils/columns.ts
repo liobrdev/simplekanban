@@ -43,3 +43,47 @@ export const deleteColumn = (index: number, columns: IColumn[]): IColumn[] => {
   columns.splice(index, 1);
   return columns;
 };
+
+
+export const moveColumn = (
+  columnId: number,
+  oldIndex: number,
+  newIndex: number,
+  columns: IColumn[],
+): IColumn[] => {
+  const numColumns = columns.length;
+
+  if (newIndex >= numColumns){
+    newIndex = numColumns - 1
+  } else if (newIndex < 0) {
+    newIndex = 0;
+  }
+
+  if (newIndex < oldIndex) {
+    columns = columns.map(c => {
+      if (
+        c.column_id !== columnId
+        && c.column_index < oldIndex && c.column_index >= newIndex
+      ) {
+        c.column_index = c.column_index + 1;
+      } else if (c.column_id === columnId) {
+        c.column_index = newIndex;
+      }
+      return c;
+    });
+  } else if (newIndex > oldIndex) {
+    columns = columns.map(c => {
+      if (
+        c.column_id !== columnId
+        && c.column_index <= newIndex && c.column_index > oldIndex
+      ) {
+        c.column_index = c.column_index - 1;
+      } else if (c.column_id === columnId) {
+        c.column_index = newIndex;
+      }
+      return c;
+    });
+  }
+
+  return columns
+};

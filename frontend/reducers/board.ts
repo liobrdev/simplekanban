@@ -1,5 +1,5 @@
 import { IBoardState } from '@/types';
-import { deleteColumn } from '@/utils';
+import { deleteColumn, moveColumn } from '@/utils';
 
 
 export const initialBoardState: IBoardState = {
@@ -27,7 +27,7 @@ export const initialBoardState: IBoardState = {
 export const boardReducer = (
   state: IBoardState = initialBoardState,
   action: any,
-  ): IBoardState => {
+): IBoardState => {
     switch (action.type) {
       case 'SET_USER_ROLE':
         return { ...state, userRole: action.userRole };
@@ -249,6 +249,24 @@ export const boardReducer = (
               }),
             ],
           },
+          columnMenu: undefined,
+        };
+      } else return state;
+
+    case 'COLUMN_MOVE':
+      if (
+        state.board
+        && typeof action?.columnId === 'number'
+        && typeof action?.oldIndex === 'number'
+        && typeof action?.newIndex === 'number'
+      ) {
+        const { columnId, oldIndex, newIndex } = action;
+        const columns =
+          moveColumn(columnId, oldIndex, newIndex, [...state.board.columns]);
+
+        return {
+          ...state,
+          board: { ...state.board, columns },
           columnMenu: undefined,
         };
       } else return state;
