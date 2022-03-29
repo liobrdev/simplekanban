@@ -4,7 +4,7 @@ import { BoardInviteUser, BoardMember } from './';
 
 
 interface Props {
-  isHidden: boolean;
+  isHidden?: boolean;
 }
 
 export default function BoardListMembers({ isHidden }: Props) {

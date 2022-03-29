@@ -49,6 +49,8 @@ class BoardColumnTitle extends Component<Props, State> {
       const form: IColumnForm = {
         column_id: this.props.column.column_id,
         column_title: this.props.column.column_title,
+        wip_limit_on: this.props.column.wip_limit_on,
+        wip_limit: this.props.column.wip_limit,
       };
       this.props.columnFormShow(form);
     }

@@ -2,6 +2,7 @@ import { MouseEvent, useRef, useState } from 'react';
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
 
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import { IAction, IButton, IModal } from '@/types';
 
 import {
   BoardListMembers,
@@ -12,10 +13,11 @@ import {
 
 
 interface Props {
-  isHidden: boolean;
+  isDemo?: boolean;
+  isHidden?: boolean;
 }
 
-export default function BoardOptions({ isHidden }: Props) {
+export default function BoardOptions({ isDemo, isHidden }: Props) {
   const {
     boardModal,
     boardOptionsOn,
@@ -40,7 +42,13 @@ export default function BoardOptions({ isHidden }: Props) {
 
   const handleTabs = (e: MouseEvent<HTMLButtonElement>, bool: boolean) => {
     e.preventDefault();
-    setTabs(bool);
+    if (isDemo) {
+      const message = 'Create an account to collaborate today!';
+      const action: IAction = { type: 'LOGIN_FROM_DEMO' };
+      const rightButton: IButton = { action, text: 'Sign up' };
+      const boardModal: IModal = { page: 'board', message, rightButton };
+      dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
+    } else setTabs(bool);
   };
 
   const buttonsDisabled = isSending || !!boardModal;
@@ -104,7 +112,7 @@ export default function BoardOptions({ isHidden }: Props) {
               </button>
             </div>
             <BoardListMessages isHidden={!leftTab} />
-            {leftTab && <BoardMessageForm />}
+            {leftTab && <BoardMessageForm isDemo={isDemo} />}
             <BoardListMembers isHidden={leftTab} />
           </div>
         )}

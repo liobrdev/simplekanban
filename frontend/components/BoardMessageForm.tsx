@@ -1,12 +1,22 @@
 import { FormEvent, useEffect, useState } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@/hooks';
-import { BoardCommands, IWebSocketParams } from '@/types';
+import {
+  BoardCommands,
+  IAction,
+  IButton,
+  IModal,
+  IWebSocketParams,
+} from '@/types';
 
 import { Input, SendIcon } from './';
 
 
-export default function BoardMessageForm() {
+interface Props {
+  isDemo?: boolean;
+}
+
+export default function BoardMessageForm({ isDemo }: Props) {
   const {
     board,
     boardModal,
@@ -32,15 +42,24 @@ export default function BoardMessageForm() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const wsCommand = BoardCommands.CREATE_MSG;
-    const wsParams: IWebSocketParams = { ...form };
-    dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    if (isDemo) {
+      const message = 'Create an account to collaborate today!';
+      const action: IAction = { type: 'LOGIN_FROM_DEMO' };
+      const rightButton: IButton = { action, text: 'Sign up' };
+      const boardModal: IModal = { page: 'board', message, rightButton };
+      dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
+    } else {
+      const wsCommand = BoardCommands.CREATE_MSG;
+      const wsParams: IWebSocketParams = { ...form };
+      dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    }
   }
 
   const buttonsDisabled = isSending || !!boardModal;
 
-  const canSubmit = 
-    !buttonsDisabled && !!board?.messages_allowed && !!form.board_msg;
+  const canSubmit = !buttonsDisabled && (
+    isDemo || (!!board?.messages_allowed && !!form.board_msg)
+  );
 
   return (
     <form
@@ -58,7 +77,7 @@ export default function BoardMessageForm() {
         disabled={buttonsDisabled}
         onChange={handleInput}
         placeholder='Send messages'
-        required
+        required={!isDemo}
         title='Send messages'
         autoFocus
       />

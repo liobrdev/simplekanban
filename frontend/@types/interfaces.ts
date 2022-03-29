@@ -58,8 +58,8 @@ export interface IColumn {
 export interface IColumnForm {
   column_id?: number;
   column_title: string;
-  wip_limit_on?: boolean;
-  wip_limit?: number;
+  wip_limit_on: boolean;
+  wip_limit: number;
 }
 
 export interface IColumnMenu {
@@ -209,6 +209,7 @@ export interface IBoardState {
   taskForm?: ITaskForm;
   boardModal?: IModal;
   userRole?: 1 | 2 | 3;
+  willLoginFromDemo: boolean;
 }
 
 export interface IDashboardState {

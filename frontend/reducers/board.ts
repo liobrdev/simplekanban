@@ -1,3 +1,5 @@
+import { parse as uuidParse, v4 as uuidv4 } from 'uuid';
+
 import { IBoardState } from '@/types';
 
 
@@ -20,6 +22,7 @@ export const initialBoardState: IBoardState = {
   roleForm: undefined,
   taskForm: undefined,
   userRole: undefined,
+  willLoginFromDemo: false,
 };
 
 export const boardReducer = (
@@ -29,6 +32,25 @@ export const boardReducer = (
     switch (action.type) {
       case 'SET_USER_ROLE':
         return { ...state, userRole: action.userRole };
+
+      case 'SET_DEMO_BOARD':
+        return {
+          ...initialBoardState,
+          board: {
+            board_slug: 'board_demo',
+            board_title: 'New kanban board',
+            activity_logs: [],
+            columns: [], // to-do, doing, done?
+            memberships: [],
+            messages: [],
+            tasks: [], // first task?
+            created_at: '',
+            updated_at: '',
+            messages_allowed: false,
+            new_members_allowed: false,
+          },
+          isReadingWs: false,
+        };
 
       case 'START_HTTP_READ_BOARD':
         return { ...state, isReadingHttp: true };
@@ -105,6 +127,18 @@ export const boardReducer = (
     case 'BOARD_FORM_INPUT':
       return { ...state, boardForm: { board_title: action.board_title } };
 
+    case 'BOARD_FORM_SUBMIT':
+      if (state.board && state.boardForm) {
+        return {
+          ...state,
+          board: {
+            ...state.board,
+            board_title: state.boardForm.board_title,
+          },
+          boardForm: undefined,
+        };
+      } else return state;
+
     case 'BOARD_OPTIONS_SHOW':
       if (state.board) {
         return {
@@ -149,6 +183,29 @@ export const boardReducer = (
         return {
           ...state,
           columnForm: { ...state.columnForm, [action.name]: action.value },
+        };
+      } else return state;
+
+    case 'COLUMN_FORM_SUBMIT':
+      if (state.board && state.columnForm) {
+        return {
+          ...state,
+          board: {
+            ...state.board,
+            columns: [
+              ...state.board.columns,
+              {
+                board: 'board_demo',
+                column_id: crypto.getRandomValues(new Uint32Array(1))[0],
+                column_title: state.columnForm.column_title,
+                column_index: state.board.columns.length,
+                wip_limit_on: state.columnForm.wip_limit_on,
+                wip_limit: state.columnForm.wip_limit,
+                updated_at: '',
+              },
+            ],
+          },
+          columnForm: undefined,
         };
       } else return state;
 
@@ -308,6 +365,9 @@ export const boardReducer = (
         wsCommand: '',
         wsParams: {},
       };
+
+    case 'LOGIN_FROM_DEMO':
+      return { ...state, willLoginFromDemo: true };
 
     case 'BOARD_RESET':
       return { ...initialBoardState };

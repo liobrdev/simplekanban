@@ -6,7 +6,11 @@ import { BoardCommands, IColumnForm } from '@/types';
 import { CloseIcon, CheckIcon, Input, PlusIcon, SliderCheckbox } from './';
 
 
-export default function BoardCreateColumn() {
+interface Props {
+  isDemo?: boolean;
+}
+
+export default function BoardCreateColumn({ isDemo }: Props) {
   const {
     columnForm,
     boardModal,
@@ -19,7 +23,7 @@ export default function BoardCreateColumn() {
 
   const handleShow = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (!hasPermission) return;
+    if (!hasPermission && !isDemo) return;
 
     const form: IColumnForm = {
       column_title: 'New column',
@@ -48,9 +52,13 @@ export default function BoardCreateColumn() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const wsCommand = BoardCommands.CREATE_COLUMN;
-    const wsParams = { ...columnForm };
-    dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    if (isDemo) {
+      dispatch({ type: 'COLUMN_FORM_SUBMIT' });
+    } else {
+      const wsCommand = BoardCommands.CREATE_COLUMN;
+      const wsParams = { ...columnForm };
+      dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    }
   };
 
   const handleToggleWIP = (e: FormEvent<HTMLInputElement>) => {
@@ -71,7 +79,8 @@ export default function BoardCreateColumn() {
     typeof columnForm.wip_limit_on === 'boolean'
   );
 
-  const buttonsDisabled = !hasPermission || isSending || !!boardModal;
+  const buttonsDisabled =
+    (!hasPermission && !isDemo) || isSending || !!boardModal;
 
   const rootClass = 'BoardCreateColumn';
 

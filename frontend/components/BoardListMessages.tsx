@@ -123,7 +123,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux {
-  isHidden: boolean;
+  isHidden?: boolean;
 }
 
 export default React.memo(connector(BoardListMessages));

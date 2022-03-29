@@ -22,6 +22,7 @@ class Dashboard extends Component<Props> {
   }
 
   componentDidMount() {
+    this.props.boardReset();
     this.authTimeout = setTimeout(() => {
       if (!this.props.user) this.props.router.replace('/login');
     }, 4000);
@@ -77,6 +78,9 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   dashboardReset: () => {
     dispatch({ type: 'DASHBOARD_RESET' });
+  },
+  boardReset: () => {
+    dispatch({ type: 'BOARD_RESET' });
   },
 });
 

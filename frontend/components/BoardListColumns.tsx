@@ -7,7 +7,11 @@ import { moveTasks } from '@/utils';
 import { BoardColumn, BoardCreateColumn } from './';
 
 
-export default function BoardListColumns() {
+interface Props {
+  isDemo?: boolean;
+}
+
+export default function BoardListColumns({ isDemo }: Props) {
   const { board, userRole } = useAppSelector((state) => state.board);
   const dispatch = useAppDispatch();
 
@@ -43,11 +47,12 @@ export default function BoardListColumns() {
   const hasColumns =
     Array.isArray(board?.columns) && !!board?.columns.length;
 
-  const canAddToEmptyBoard =
-    !hasColumns && (userRole === 1 || userRole === 2);
+  const canAddToEmptyBoard = !hasColumns && (
+    isDemo || (userRole === 1 || userRole === 2)
+  );
 
   const cannotAddToEmptyBoard =
-    !hasColumns && !(userRole === 1 || userRole === 2);
+    !hasColumns && !isDemo && !(userRole === 1 || userRole === 2);
 
   return board ? (
     <div className='BoardListColumns'>
@@ -65,9 +70,9 @@ export default function BoardListColumns() {
                 </li>
               ))
             }
-            {(userRole === 1 || userRole === 2) && (
+            {(isDemo || userRole === 1 || userRole === 2) && (
               <li className='BoardListColumns-list-item'>
-                <BoardCreateColumn />
+                <BoardCreateColumn isDemo={isDemo} />
               </li>
             )}
           </ul>

@@ -46,6 +46,11 @@ class Home extends Component<Props> {
         </Head>
         <main className='Page Page--home'>
           <h1>SimpleKanban</h1>
+          <Link href={{ pathname: '/demo' }}>
+            <a className='DemoLink'>
+              <span className='DemoLink-text'>Demo</span>
+            </a>
+          </Link>
           <h2>
             Easy-to-use, interactive Kanban boards for all of your projects
           </h2>

@@ -43,7 +43,9 @@ class BoardTitle extends Component<Props, State> {
   
   handleShow(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    if (this.props.userRole === 1) this.props.boardFormShow();
+    if (this.props.userRole === 1 || this.props.isDemo) {
+      this.props.boardFormShow();
+    }
   }
 
   handleClose(e: MouseEvent<HTMLButtonElement | HTMLDivElement>) {
@@ -60,9 +62,13 @@ class BoardTitle extends Component<Props, State> {
   handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (this.props.board?.board_title !== this.props.boardForm?.board_title) {
-      const wsCommand = BoardCommands.TITLE;
-      const wsParams = { ...this.props.boardForm };
-      this.props.startWsCommand(wsCommand, wsParams);
+      if (this.props.isDemo) {
+        this.props.boardFormSubmit();
+      } else {
+        const wsCommand = BoardCommands.TITLE;
+        const wsParams = { ...this.props.boardForm };
+        this.props.startWsCommand(wsCommand, wsParams);
+      }
     } else this.props.boardFormClose();
   };
   
@@ -102,7 +108,7 @@ class BoardTitle extends Component<Props, State> {
 
     const buttonsDisabled = isSending || !!boardModal;
 
-    const hasPermission = userRole === 1 || userRole === 2;
+    const hasPermission = userRole === 1;
 
     const form = (
       <form
@@ -189,6 +195,9 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   boardFormInput: (board_title: string) => {
     dispatch({ type: 'BOARD_FORM_INPUT', board_title });
   },
+  boardFormSubmit: () => {
+    dispatch({ type: 'BOARD_FORM_SUBMIT' });
+  },
   startWsCommand: (wsCommand: BoardCommands, wsParams: IWebSocketParams) => {
     dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
   }
@@ -196,7 +205,11 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-type Props = ConnectedProps<typeof connector>;
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface Props extends PropsFromRedux {
+  isDemo?: boolean;
+}
 
 interface State {
   didFocus: boolean;
