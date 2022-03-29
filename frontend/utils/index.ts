@@ -1,3 +1,3 @@
-export * from './checkAdjacentColumns';
-export * from './moveTasks';
+export * from './columns';
 export * from './request';
+export * from './tasks';

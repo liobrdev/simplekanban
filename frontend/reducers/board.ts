@@ -1,6 +1,5 @@
-import { parse as uuidParse, v4 as uuidv4 } from 'uuid';
-
 import { IBoardState } from '@/types';
+import { deleteColumn } from '@/utils';
 
 
 export const initialBoardState: IBoardState = {
@@ -231,6 +230,39 @@ export const boardReducer = (
         return {
           ...state,
           columnMenu: { ...state.columnMenu, [action.name]: action.value },
+        };
+      } else return state;
+
+    case 'COLUMN_MENU_SUBMIT':
+      if (state.board && state.columnMenu) {
+        const { column_id, wip_limit_on, wip_limit } = state.columnMenu;
+
+        return {
+          ...state,
+          board: {
+            ...state.board,
+            columns: [
+              ...state.board.columns.map(c => c.column_id !== column_id ? c : {
+                ...c,
+                wip_limit_on,
+                wip_limit,
+              }),
+            ],
+          },
+          columnMenu: undefined,
+        };
+      } else return state;
+
+    case 'COLUMN_DELETE':
+      if (state.board && typeof action?.column_index === 'number') {
+        const columns =
+          deleteColumn(action.column_index, [...state.board.columns]);
+
+        return {
+          ...state,
+          board: { ...state.board, columns },
+          boardModal: undefined,
+          columnMenu: undefined,
         };
       } else return state;
 

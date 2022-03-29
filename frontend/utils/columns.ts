@@ -6,6 +6,7 @@ interface IAdjacentColumns {
   rightColumn?: IColumn;
 }
 
+
 export const checkAdjacentColumns = (
   thisColumnId?: number,
   columns?: IColumn[],
@@ -32,4 +33,13 @@ export const checkAdjacentColumns = (
   });
   
   return { leftColumn, rightColumn };
+};
+
+
+export const deleteColumn = (index: number, columns: IColumn[]): IColumn[] => {
+  for (let i = index + 1; i < columns.length; i++) {
+    columns[i].column_index = columns[i].column_index - 1;
+  }
+  columns.splice(index, 1);
+  return columns;
 };

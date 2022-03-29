@@ -66,7 +66,7 @@ export default function BoardListColumns({ isDemo }: Props) {
                   className='BoardListColumns-list-item'
                   key={column.column_id}
                 >
-                  <BoardColumn column={column} />
+                  <BoardColumn column={column} isDemo={isDemo} />
                 </li>
               ))
             }

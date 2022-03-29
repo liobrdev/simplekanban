@@ -17,9 +17,10 @@ import { CheckIcon, LeftArrowIcon, RightArrowIcon, TrashIcon } from './'
 interface Props {
   column: IColumn;
   disabled?: boolean;
+  isDemo?: boolean;
 }
   
-export default function BoardTaskButtons({ column, disabled }: Props) {
+export default function BoardTaskButtons({ column, disabled, isDemo }: Props) {
   const { board, columnMenu } = useAppSelector((state) => state.board);
   const dispatch = useAppDispatch();
   
@@ -30,13 +31,18 @@ export default function BoardTaskButtons({ column, disabled }: Props) {
 
   const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const message = 'Are you sure you want to delete this column?';
-    const action: IAction = {
+
+    const action: IAction = isDemo ? {
+      type: 'COLUMN_DELETE',
+      column_index: column.column_index,
+    } : {
       type: 'START_WS_COMMAND',
       wsCommand: BoardCommands.DELETE_COLUMN,
       wsParams: { column_id: columnMenu?.column_id },
     };
+
     const rightButton: IButton = { action, text: 'Confirm' };
+    const message = 'Are you sure you want to delete this column?';
     const boardModal: IModal = { page: 'board', message, rightButton };
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
   };

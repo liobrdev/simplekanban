@@ -9,9 +9,10 @@ import { BoardColumnButtons, Input, SliderCheckbox } from './';
 interface Props {
   column: IColumn;
   disabled: boolean;
+  isDemo?: boolean;
 }
 
-export default function BoardColumnOptions({ column, disabled }: Props) {
+export default function BoardColumnOptions(props: Props) {
   const { columnMenu, isSending } = useAppSelector((state) => state.board);
   const dispatch = useAppDispatch();
 
@@ -24,9 +25,13 @@ export default function BoardColumnOptions({ column, disabled }: Props) {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const wsCommand = BoardCommands.UPDATE_COLUMN;
-    const wsParams: IWebSocketParams = { ...columnMenu };
-    dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    if (props.isDemo) {
+      dispatch({ type: 'COLUMN_MENU_SUBMIT' });
+    } else {
+      const wsCommand = BoardCommands.UPDATE_COLUMN;
+      const wsParams: IWebSocketParams = { ...columnMenu };
+      dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    }
   };
 
   const handleToggleWIP = (e: FormEvent<HTMLInputElement>) => {
@@ -56,7 +61,7 @@ export default function BoardColumnOptions({ column, disabled }: Props) {
           name='wip_limit_on'
           checked={columnMenu?.wip_limit_on}
           onChange={handleToggleWIP}
-          disabled={disabled}
+          disabled={props.disabled}
         />
         <Input
           className={`${rootClass}-form-input ${rootClass}-form-input--wipLimit`}
@@ -66,9 +71,13 @@ export default function BoardColumnOptions({ column, disabled }: Props) {
           min={0}
           value={columnMenu?.wip_limit}
           onChange={handleInput}
-          disabled={disabled || !columnMenu?.wip_limit_on}
+          disabled={props.disabled || !columnMenu?.wip_limit_on}
         />
-        <BoardColumnButtons column={column} disabled={disabled} />
+        <BoardColumnButtons
+          column={props.column}
+          disabled={props.disabled}
+          isDemo={props.isDemo}
+        />
       </form>
     </div>
   );

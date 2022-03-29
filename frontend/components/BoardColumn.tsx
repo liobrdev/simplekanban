@@ -16,9 +16,10 @@ import {
 
 interface Props {
   column: IColumn;
+  isDemo?: boolean;
 }
 
-export default function BoardColumn({ column }: Props) {
+export default function BoardColumn({ column, isDemo }: Props) {
   const {
     board,
     boardModal,
@@ -111,7 +112,7 @@ export default function BoardColumn({ column }: Props) {
     board?.tasks.filter(task => task.column === column.column_id).length
 
   const isOverWipLimit =
-  !!column.wip_limit_on && !!numTasks && numTasks > column.wip_limit;
+    !!column.wip_limit_on && !!numTasks && numTasks > column.wip_limit;
 
   const wipRatio = !formOn && !menuOn && column.wip_limit_on ? (
     <button
@@ -133,10 +134,14 @@ export default function BoardColumn({ column }: Props) {
     }`}>
       <div className='BoardColumnTopPanel'>
         <BoardColumnTitle column={column} formOn={formOn} />
-        {userRole === 1 || userRole === 2 ? icons : null}
+        {isDemo || userRole === 1 || userRole === 2 ? icons : null}
         {wipRatio}
         {menuOn && (
-          <BoardColumnOptions column={column} disabled={buttonsDisabled} />
+          <BoardColumnOptions
+            column={column}
+            disabled={buttonsDisabled}
+            isDemo={isDemo}
+          />
         )}
       </div>
       <Droppable droppableId={'' + column.column_id}>
