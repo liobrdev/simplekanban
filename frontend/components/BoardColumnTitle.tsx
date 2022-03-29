@@ -45,7 +45,11 @@ class BoardColumnTitle extends Component<Props, State> {
   
   handleShow(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    if (this.props.userRole === 1 || this.props.userRole === 2) {
+    if (
+      this.props.isDemo
+      || this.props.userRole === 1
+      || this.props.userRole === 2
+    ) {
       const form: IColumnForm = {
         column_id: this.props.column.column_id,
         column_title: this.props.column.column_title,
@@ -70,16 +74,20 @@ class BoardColumnTitle extends Component<Props, State> {
 
   handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const { columnForm, column, formOn } = this.props;
+    const { columnForm, column, formOn, isDemo } = this.props;
     if (
       formOn &&
-      columnForm?.column_title !== column?.column_title &&
+      columnForm?.column_title !== column.column_title &&
       columnForm?.column_title !== ''
     ) {
-      const wsCommand = BoardCommands.UPDATE_COLUMN;
-      const wsParams = { ...columnForm };
-      this.props.startWsCommand(wsCommand, wsParams);
-    }  else this.props.columnFormClose();
+      if (isDemo) {
+        this.props.columnTitleUpdate(column.column_id);
+      } else {
+        const wsCommand = BoardCommands.UPDATE_COLUMN;
+        const wsParams = { ...columnForm };
+        this.props.startWsCommand(wsCommand, wsParams);
+      }
+    } else this.props.columnFormClose();
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -118,6 +126,7 @@ class BoardColumnTitle extends Component<Props, State> {
       columnForm,
       boardModal,
       formOn,
+      isDemo,
       isSending,
       userRole,
     } = this.props;
@@ -126,7 +135,7 @@ class BoardColumnTitle extends Component<Props, State> {
 
     const buttonsDisabled = !!boardModal;
 
-    const hasPermission = userRole === 1 || userRole === 2;
+    const hasPermission = isDemo || userRole === 1 || userRole === 2;
 
     const form = (
       <form
@@ -212,6 +221,9 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   columnFormInput: (name: string, value: boolean | number | string) => {
     dispatch({ type: 'COLUMN_FORM_INPUT', name, value });
   },
+  columnTitleUpdate: (column_id: number) => {
+    dispatch({ type: 'COLUMN_TITLE_UPDATE', column_id });
+  },
   startWsCommand: (wsCommand: BoardCommands, wsParams: IWebSocketParams) => {
     dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
   }
@@ -224,6 +236,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 interface Props extends PropsFromRedux {
   column: IColumn;
   formOn?: boolean;
+  isDemo?: boolean;
 }
 
 interface State {

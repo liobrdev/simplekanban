@@ -185,29 +185,6 @@ export const boardReducer = (
         };
       } else return state;
 
-    case 'COLUMN_FORM_SUBMIT':
-      if (state.board && state.columnForm) {
-        return {
-          ...state,
-          board: {
-            ...state.board,
-            columns: [
-              ...state.board.columns,
-              {
-                board: 'board_demo',
-                column_id: crypto.getRandomValues(new Uint32Array(1))[0],
-                column_title: state.columnForm.column_title,
-                column_index: state.board.columns.length,
-                wip_limit_on: state.columnForm.wip_limit_on,
-                wip_limit: state.columnForm.wip_limit,
-                updated_at: '',
-              },
-            ],
-          },
-          columnForm: undefined,
-        };
-      } else return state;
-
     case 'COLUMN_MENU_SHOW':
       return {
         ...state,
@@ -249,6 +226,48 @@ export const boardReducer = (
               }),
             ],
           },
+          columnMenu: undefined,
+        };
+      } else return state;
+
+    case 'COLUMN_CREATE':
+      if (state.board && state.columnForm) {
+        return {
+          ...state,
+          board: {
+            ...state.board,
+            columns: [
+              ...state.board.columns,
+              {
+                board: 'board_demo',
+                column_id: crypto.getRandomValues(new Uint32Array(1))[0],
+                column_title: state.columnForm.column_title,
+                column_index: state.board.columns.length,
+                wip_limit_on: state.columnForm.wip_limit_on,
+                wip_limit: state.columnForm.wip_limit,
+                updated_at: '',
+              },
+            ],
+          },
+          columnForm: undefined,
+        };
+      } else return state;
+
+    case 'COLUMN_TITLE_UPDATE':
+      if (state.board && state.columnForm) {
+        const columns = [...state.board.columns];
+
+        for (let i = 0; i < columns.length; i++) {
+          if (columns[i].column_id === action.column_id) {
+            columns[i].column_title = state.columnForm.column_title;
+            break;
+          }
+        }
+
+        return {
+          ...state,
+          board: { ...state.board, columns },
+          columnForm: undefined,
           columnMenu: undefined,
         };
       } else return state;

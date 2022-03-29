@@ -27,7 +27,7 @@ export default function BoardListColumns({ isDemo }: Props) {
 
     let tasks = board?.tasks;
     if (!tasks) return;
-    
+
     tasks = moveTasks(tasks, destination, draggableId, source);
     dispatch({ type: 'SUCCESS_SAVE_TASKS', tasks });
 

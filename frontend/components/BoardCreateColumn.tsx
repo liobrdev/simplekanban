@@ -53,7 +53,7 @@ export default function BoardCreateColumn({ isDemo }: Props) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isDemo) {
-      dispatch({ type: 'COLUMN_FORM_SUBMIT' });
+      dispatch({ type: 'COLUMN_CREATE' });
     } else {
       const wsCommand = BoardCommands.CREATE_COLUMN;
       const wsParams = { ...columnForm };

@@ -133,7 +133,7 @@ export default function BoardColumn({ column, isDemo }: Props) {
       isOverWipLimit ? ' is-overLimit' : ''
     }`}>
       <div className='BoardColumnTopPanel'>
-        <BoardColumnTitle column={column} formOn={formOn} />
+        <BoardColumnTitle column={column} formOn={formOn} isDemo={isDemo} />
         {isDemo || userRole === 1 || userRole === 2 ? icons : null}
         {wipRatio}
         {menuOn && (
