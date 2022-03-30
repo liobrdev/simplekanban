@@ -212,20 +212,20 @@ export const boardReducer = (
 
     case 'COLUMN_MENU_SUBMIT':
       if (state.board && state.columnMenu) {
-        const { column_id, wip_limit_on, wip_limit } = state.columnMenu;
+        const columns = [...state.board.columns];
+
+        for (let i = 0; i < columns.length; i++) {
+          if (columns[i].column_id === state.columnMenu.column_id) {
+            columns[i].wip_limit_on = state.columnMenu.wip_limit_on;
+            columns[i].wip_limit = state.columnMenu.wip_limit;
+            break;
+          }
+        }
 
         return {
           ...state,
-          board: {
-            ...state.board,
-            columns: [
-              ...state.board.columns.map(c => c.column_id !== column_id ? c : {
-                ...c,
-                wip_limit_on,
-                wip_limit,
-              }),
-            ],
-          },
+          board: { ...state.board, columns },
+          columnForm: undefined,
           columnMenu: undefined,
         };
       } else return state;
@@ -254,11 +254,11 @@ export const boardReducer = (
       } else return state;
 
     case 'COLUMN_TITLE_UPDATE':
-      if (state.board && state.columnForm) {
+      if (state.board && typeof state.columnForm?.column_id === 'number') {
         const columns = [...state.board.columns];
 
         for (let i = 0; i < columns.length; i++) {
-          if (columns[i].column_id === action.column_id) {
+          if (columns[i].column_id === state.columnForm.column_id) {
             columns[i].column_title = state.columnForm.column_title;
             break;
           }

@@ -81,7 +81,7 @@ class BoardColumnTitle extends Component<Props, State> {
       columnForm?.column_title !== ''
     ) {
       if (isDemo) {
-        this.props.columnTitleUpdate(column.column_id);
+        this.props.columnTitleUpdate();
       } else {
         const wsCommand = BoardCommands.UPDATE_COLUMN;
         const wsParams = { ...columnForm };
@@ -221,8 +221,8 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   columnFormInput: (name: string, value: boolean | number | string) => {
     dispatch({ type: 'COLUMN_FORM_INPUT', name, value });
   },
-  columnTitleUpdate: (column_id: number) => {
-    dispatch({ type: 'COLUMN_TITLE_UPDATE', column_id });
+  columnTitleUpdate: () => {
+    dispatch({ type: 'COLUMN_TITLE_UPDATE' });
   },
   startWsCommand: (wsCommand: BoardCommands, wsParams: IWebSocketParams) => {
     dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
