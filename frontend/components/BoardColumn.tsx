@@ -166,7 +166,7 @@ export default function BoardColumn({ column, isDemo }: Props) {
                       { ...provided.dragHandleProps }
                       className='BoardColumnListTasks-item'
                     >
-                      <BoardTask task={task} />
+                      <BoardTask task={task} isDemo={isDemo} />
                     </li>
                   )}
                 </Draggable>
@@ -175,7 +175,7 @@ export default function BoardColumn({ column, isDemo }: Props) {
             {provided.placeholder}
             {isCreatingTask && (
               <li className='BoardColumnListTasks-item'>
-                <BoardTask isCreating />
+                <BoardTask isCreating isDemo={isDemo} />
               </li>
             )}
           </ul>

@@ -413,6 +413,46 @@ export const boardReducer = (
         };
       } else return state;
 
+    case 'TASK_CREATE':
+      if (state.board && state.taskForm) {
+        return {
+          ...state,
+          board: {
+            ...state.board,
+            tasks: [
+              ...state.board.tasks,
+              {
+                board: 'board_demo',
+                column: state.taskForm.column_id,
+                task_id: crypto.getRandomValues(new Uint32Array(1))[0],
+                task_index: state.board.tasks.length,
+                text: state.taskForm.text,
+                updated_at: '',
+              },
+            ],
+          },
+          taskForm: undefined,
+        };
+      } else return state;
+
+    case 'TASK_UPDATE':
+      if (state.board && typeof state.taskForm?.task_id === 'number') {
+        const tasks = [...state.board.tasks];
+
+        for (let i = 0; i < tasks.length; i++) {
+          if (tasks[i].task_id === state.taskForm.task_id) {
+            tasks[i].text = state.taskForm.text;
+            break;
+          }
+        }
+
+        return {
+          ...state,
+          board: { ...state.board, tasks },
+          taskForm: undefined,
+        };
+      } else return state;
+
     case 'BOARD_MODAL_SHOW':
       return { ...state, boardModal: { ...action.boardModal } };
 

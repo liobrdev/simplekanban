@@ -9,9 +9,10 @@ import { Input } from './';
 interface Props {
   task?: ITask;
   formOn: boolean;
+  isDemo?: boolean;
 }
 
-export default function BoardTaskTest({ task, formOn }: Props) {
+export default function BoardTaskTest({ task, formOn, isDemo }: Props) {
   const {
     boardModal,
     isSending,
@@ -27,10 +28,14 @@ export default function BoardTaskTest({ task, formOn }: Props) {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const wsCommand =
-      task ? BoardCommands.UPDATE_TASK : BoardCommands.CREATE_TASK;
-    const wsParams: IWebSocketParams = { ...taskForm };
-    dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    if (isDemo) {
+      dispatch({ type: `TASK_${ task ? 'UPD' : 'CRE' }ATE` });
+    } else {
+      const wsCommand =
+        task ? BoardCommands.UPDATE_TASK : BoardCommands.CREATE_TASK;
+      const wsParams: IWebSocketParams = { ...taskForm };
+      dispatch({ type: 'START_WS_COMMAND', wsCommand, wsParams });
+    }
   };
 
   const buttonsDisabled = isSending || !!boardModal;

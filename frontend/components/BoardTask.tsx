@@ -8,10 +8,11 @@ import { BoardTaskButtons, BoardTaskText, MenuIcon } from './';
 
 interface Props {
   isCreating?: boolean;
+  isDemo?: boolean;
   task?: ITask;
 }
 
-export default function BoardTask({ isCreating, task }: Props) {
+export default function BoardTask({ isCreating, task, isDemo }: Props) {
   const {
     boardModal,
     isSending,
@@ -59,7 +60,7 @@ export default function BoardTask({ isCreating, task }: Props) {
   return (
     <div className={`BoardTask${formOn ? ' is-on' : ''}`}>
       <div className='BoardTaskTopPanel'>
-        <BoardTaskText task={task} formOn={formOn} />
+        <BoardTaskText task={task} formOn={formOn} isDemo={isDemo} />
         <div className='MenuIcon-container'>
           <MenuIcon
             className={formOn ? 'is-active' : ''}
@@ -70,7 +71,13 @@ export default function BoardTask({ isCreating, task }: Props) {
           />
         </div>
       </div>
-      {formOn && <BoardTaskButtons task={task} disabled={buttonsDisabled} />}
+      {formOn && (
+        <BoardTaskButtons
+          task={task}
+          disabled={buttonsDisabled}
+          isDemo={isDemo}
+        />
+      )}
     </div>
   );
 }

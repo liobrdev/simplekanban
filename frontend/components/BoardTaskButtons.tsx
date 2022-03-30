@@ -10,6 +10,7 @@ import { CheckIcon, LeftArrowIcon, RightArrowIcon, TrashIcon } from './'
 interface Props {
   task?: ITask;
   disabled?: boolean;
+  isDemo?: boolean;
 }
   
 export default function BoardTaskButtons({ task, disabled }: Props) {
