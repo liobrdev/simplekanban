@@ -291,13 +291,21 @@ export const boardReducer = (
       } else return state;
 
     case 'COLUMN_DELETE':
-      if (state.board && typeof action?.column_index === 'number') {
+      if (
+        state.board && state.columnMenu
+        && typeof action?.column_index === 'number'
+      ) {
         const columns =
           deleteColumn(action.column_index, [...state.board.columns]);
+        const { column_id } = state.columnMenu;
 
         return {
           ...state,
-          board: { ...state.board, columns },
+          board: {
+            ...state.board,
+            columns,
+            tasks: state.board.tasks.filter(t => t.column !== column_id),
+          },
           boardModal: undefined,
           columnMenu: undefined,
         };
