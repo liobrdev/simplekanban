@@ -15,7 +15,7 @@ $translateX: 0;
   height: $width-line + 6px;
 
   &:focus {
-    outline: $red dotted 1px;
+    outline: $red dashed 1px;
   }
 
   &:hover,
@@ -72,7 +72,7 @@ $translateX: 0;
     
   &.is-active {
     &:focus {
-      outline: white dotted 1px;
+      outline: white dashed 1px;
     }
 
     &:hover,

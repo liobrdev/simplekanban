@@ -40,6 +40,15 @@ export default function BoardOptions({ isDemo, isHidden }: Props) {
     dispatch({ type: 'BOARD_OPTIONS_CLOSE' });
   };
 
+  const handleSaveDemo = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const message = 'Create an account to save your work!';
+    const action: IAction = { type: 'LOGIN_FROM_DEMO' };
+    const rightButton: IButton = { action, text: 'Sign up' };
+    const boardModal: IModal = { page: 'board', message, rightButton };
+    dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
+  };
+
   const handleTabs = (e: MouseEvent<HTMLButtonElement>, bool: boolean) => {
     e.preventDefault();
     if (isDemo) {
@@ -80,41 +89,53 @@ export default function BoardOptions({ isDemo, isHidden }: Props) {
           />
         </div>
         {boardOptionsOn && (
-          <div className={`${rootClass}-tabs`}>
-            <div className={`${rootClass}-tabs-buttons`}>
+          <>
+            {isDemo && (
               <button
-                className={
-                  `${
-                    rootClass
-                  }-tabs-buttons-button${
-                    leftTab ? ' is-active' : ''
-                  }`
-                }
-                onClick={e => handleTabs(e, true)}
+                className={`${rootClass}-saveDemo`}
+                onClick={handleSaveDemo}
                 type='button'
                 disabled={buttonsDisabled}
               >
-                Chat
+                Save changes
               </button>
-              <button
-                className={
-                  `${
-                    rootClass
-                  }-tabs-buttons-button${
-                    !leftTab ? ' is-active' : ''
-                  }`
-                }
-                onClick={e => handleTabs(e, false)}
-                type='button'
-                disabled={buttonsDisabled}
-              >
-                Members
-              </button>
+            )}
+            <div className={`${rootClass}-tabs`}>
+              <div className={`${rootClass}-tabs-buttons`}>
+                <button
+                  className={
+                    `${
+                      rootClass
+                    }-tabs-buttons-button${
+                      leftTab ? ' is-active' : ''
+                    }`
+                  }
+                  onClick={e => handleTabs(e, true)}
+                  type='button'
+                  disabled={buttonsDisabled}
+                >
+                  Chat
+                </button>
+                <button
+                  className={
+                    `${
+                      rootClass
+                    }-tabs-buttons-button${
+                      !leftTab ? ' is-active' : ''
+                    }`
+                  }
+                  onClick={e => handleTabs(e, false)}
+                  type='button'
+                  disabled={buttonsDisabled}
+                >
+                  Members
+                </button>
+              </div>
+              <BoardListMessages isHidden={!leftTab} />
+              {leftTab && <BoardMessageForm isDemo={isDemo} />}
+              <BoardListMembers isHidden={leftTab} />
             </div>
-            <BoardListMessages isHidden={!leftTab} />
-            {leftTab && <BoardMessageForm isDemo={isDemo} />}
-            <BoardListMembers isHidden={leftTab} />
-          </div>
+          </>
         )}
       </div>
     </>

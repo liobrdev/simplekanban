@@ -50,7 +50,6 @@
         height: 18px;
 
         &-line {
-          // background-color: white;
           width: 5px;
           height: 5px;
           border-radius: 50%;
@@ -105,6 +104,34 @@
     }
   }
 
+  &-saveDemo {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    background-color: $red;
+    outline: none;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    box-shadow: 1px 2px 2px 2px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: white;
+    -webkit-transition: all 0.1s linear;
+       -moz-transition: all 0.1s linear;
+         -o-transition: all 0.1s linear;
+            transition: all 0.1s linear;
+
+    &:hover,
+    &:focus {
+      cursor: pointer;
+      background-color: $gold;
+      color: black;
+    }
+  }
+
   &-tabs {
     width: 100%;
     height: calc(100% - 50px);
@@ -151,7 +178,6 @@
         }
   
         &:nth-of-type(2) {
-          // border-left: 0.5px solid $red;
           border-top-left-radius: 10px;
           border-top-right-radius: 10px;
         }
@@ -325,12 +351,6 @@
             letter-spacing: 1px;
             border: none;
             outline: none;
-
-            // &:focus {
-              // border-bottom-left-radius: 0px;
-              // border-bottom-right-radius: 0px;
-              // border-bottom: 0.5px solid $red;
-            // }
           }
         }
 
@@ -774,6 +794,10 @@
       .BoardOptions-button {
         text-align: right;
         padding-right: 10px;
+      }
+
+      .BoardOptions-saveDemo {
+        left: 12px;
       }
     }
 
