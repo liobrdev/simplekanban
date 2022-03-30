@@ -2,7 +2,7 @@ import { MouseEvent } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { BoardCommands, ITask, IWebSocketParams } from '@/types';
-import { checkAdjacentColumns } from '@/utils';
+import { checkAdjacentColumns, moveTasks } from '@/utils';
 
 import { CheckIcon, LeftArrowIcon, RightArrowIcon, TrashIcon } from './'
 
@@ -45,19 +45,27 @@ export default function BoardTaskButtons({ task, disabled, isDemo }: Props) {
 
   const handleMove = (e: MouseEvent<HTMLButtonElement>, column_id: number) => {
     e.preventDefault();
-    if (!task) return;
+    if (!board?.tasks || !task) return;
+  
+    if (isDemo) {
+      const tasks = moveTasks(
+        task.task_id, task.task_index, task.task_index, task.column,
+        column_id, board.tasks,
+      );
+      dispatch({ type: 'SUCCESS_SAVE_TASKS', tasks });
+    } else {
+      const wsParams: IWebSocketParams = {
+        task_id: task.task_id,
+        task_index: task.task_index,
+        column_id,
+      };
 
-    const wsParams: IWebSocketParams = {
-      task_id: task.task_id,
-      task_index: task.task_index,
-      column_id,
-    };
-
-    dispatch({
-      type: 'START_WS_COMMAND',
-      wsCommand: BoardCommands.MOVE_TASK,
-      wsParams,
-    });
+      dispatch({
+        type: 'START_WS_COMMAND',
+        wsCommand: BoardCommands.MOVE_TASK,
+        wsParams,
+      });
+    }
   };
 
   const buttonMoveTaskLeft = task && leftColumn ? (

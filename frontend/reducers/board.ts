@@ -415,21 +415,21 @@ export const boardReducer = (
 
     case 'TASK_CREATE':
       if (state.board && state.taskForm) {
+        const { column_id, text } = state.taskForm;
+        const { tasks } = state.board;
+
         return {
           ...state,
           board: {
             ...state.board,
-            tasks: [
-              ...state.board.tasks,
-              {
-                board: 'board_demo',
-                column: state.taskForm.column_id,
-                task_id: crypto.getRandomValues(new Uint32Array(1))[0],
-                task_index: state.board.tasks.length,
-                text: state.taskForm.text,
-                updated_at: '',
-              },
-            ],
+            tasks: [...tasks, {
+              board: 'board_demo',
+              column: column_id,
+              task_id: crypto.getRandomValues(new Uint32Array(1))[0],
+              task_index: tasks.filter(t => t.column === column_id).length,
+              text,
+              updated_at: '',
+            }],
           },
           taskForm: undefined,
         };

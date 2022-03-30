@@ -22,47 +22,44 @@ export const deleteTask = (
 
 
 export const moveTasks = (
+  taskId: number,
+  oldIndex: number,
+  newIndex: number,
+  oldColumnId: number,
+  newColumnId: number,
   tasks: ITask[],
-  destination: DraggableLocation | undefined,
-  draggableId: string | number,
-  source: DraggableLocation,
 ): ITask[] => {
-  if (!destination) return tasks;
+  const destinationTaskCount =
+    tasks.filter(t => t.column === newColumnId).length;
 
-  let newIndex = destination.index;
-
-  const destinationTaskCount = tasks.filter(task => (
-    task.column === +destination.droppableId
-  )).length;
-
-  if (destination.droppableId === source.droppableId) {
+  if (newColumnId === oldColumnId) {
     if (newIndex >= destinationTaskCount) {
       newIndex = destinationTaskCount - 1;
     } else if (newIndex < 0) {
       newIndex = 0;
     }
 
-    tasks = tasks.map((task) => {
-      if (task.task_id === +draggableId) {
-        return { ...task, task_index: newIndex };
+    tasks = tasks.map(t => {
+      if (t.task_id === taskId) {
+        return { ...t, task_index: newIndex };
       } else if (
-        task.column === +destination.droppableId &&
-        newIndex > source.index &&
-        task.task_id !== +draggableId &&
-        task.task_index <= newIndex &&
-        task.task_index > source.index
+        t.column === newColumnId
+        && newIndex > oldIndex
+        && t.task_id !== taskId
+        && t.task_index <= newIndex
+        && t.task_index > oldIndex
       ) {
-        return { ...task, task_index: task.task_index - 1 };
+        return { ...t, task_index: t.task_index - 1 };
       } else if (
-        task.column === +destination.droppableId &&
-        newIndex < source.index &&
-        task.task_id !== +draggableId &&
-        task.task_index < source.index &&
-        task.task_index >= newIndex
+        t.column === newColumnId &&
+        newIndex < oldIndex &&
+        t.task_id !== taskId &&
+        t.task_index < oldIndex &&
+        t.task_index >= newIndex
       ) {
-        return { ...task, task_index: task.task_index + 1 };
+        return { ...t, task_index: t.task_index + 1 };
       }
-      return task;
+      return t;
     });
   } else {
     if (newIndex > destinationTaskCount) {
@@ -71,25 +68,15 @@ export const moveTasks = (
       newIndex = 0;
     }
 
-    tasks = tasks.map((task) => {
-      if (task.task_id === +draggableId) {
-        return {
-          ...task,
-          column: +destination.droppableId,
-          task_index: newIndex,
-        };
-      } else if (
-        task.column === +source.droppableId &&
-        task.task_index > source.index
-      ) {
-        return { ...task, task_index: task.task_index - 1 };
-      } else if (
-        task.column === +destination.droppableId &&
-        task.task_index >= destination.index
-      ) {
-        return { ...task, task_index: task.task_index + 1 };
+    tasks = tasks.map(t => {
+      if (t.task_id === taskId) {
+        return { ...t, column: newColumnId, task_index: newIndex };
+      } else if (t.column === oldColumnId && t.task_index > oldIndex) {
+        return { ...t, task_index: t.task_index - 1 };
+      } else if (t.column === newColumnId && t.task_index >= newIndex) {
+        return { ...t, task_index: t.task_index + 1 };
       }
-      return task;
+      return t;
     });
   }
 

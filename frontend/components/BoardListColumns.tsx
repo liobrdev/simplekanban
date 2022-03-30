@@ -20,16 +20,22 @@ export default function BoardListColumns({ isDemo }: Props) {
 
     if (
       !destination || (
-        destination.droppableId === source.droppableId &&
-        destination.index === source.index
+        destination.droppableId === source.droppableId
+        && destination.index === source.index
       )
     ) return;
 
     let tasks = board?.tasks;
     if (!tasks) return;
 
-    tasks = moveTasks(tasks, destination, draggableId, source);
+    tasks = moveTasks(
+      +draggableId, source.index, destination.index, +source.droppableId,
+      +destination.droppableId, tasks,
+    );
+
     dispatch({ type: 'SUCCESS_SAVE_TASKS', tasks });
+
+    if (isDemo) return;
 
     const params: IWebSocketParams = {
       task_id: +draggableId,
