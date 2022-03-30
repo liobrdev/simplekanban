@@ -1,4 +1,3 @@
-import { DraggableLocation } from 'react-beautiful-dnd';
 import { ITask } from '@/types';
 
 
