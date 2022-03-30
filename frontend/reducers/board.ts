@@ -1,5 +1,5 @@
 import { IBoardState } from '@/types';
-import { deleteColumn, moveColumn } from '@/utils';
+import { deleteColumn, moveColumn, deleteTask } from '@/utils';
 
 
 export const initialBoardState: IBoardState = {
@@ -445,6 +445,23 @@ export const boardReducer = (
             break;
           }
         }
+
+        return {
+          ...state,
+          board: { ...state.board, tasks },
+          taskForm: undefined,
+        };
+      } else return state;
+
+    case 'TASK_DELETE':
+      if (
+        state.board
+        && typeof action?.column_id === 'number'
+        && typeof action?.task_index === 'number'
+      ) {
+        const { column_id, task_index } = action;
+        const tasks =
+          deleteTask(column_id, task_index, [...state.board.tasks]);
 
         return {
           ...state,

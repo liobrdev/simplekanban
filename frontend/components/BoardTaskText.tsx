@@ -28,7 +28,9 @@ export default function BoardTaskTest({ task, formOn, isDemo }: Props) {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isDemo) {
+    if (!taskForm?.text) {
+      dispatch({ type: 'TASK_FORM_CLOSE' });
+    } else if (isDemo) {
       dispatch({ type: `TASK_${ task ? 'UPD' : 'CRE' }ATE` });
     } else {
       const wsCommand =
@@ -58,7 +60,6 @@ export default function BoardTaskTest({ task, formOn, isDemo }: Props) {
             maxLength={80}
             onChange={handleInput}
             autoFocus
-            required
           />
         </form>
       ) : (

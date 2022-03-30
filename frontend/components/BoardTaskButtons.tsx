@@ -13,7 +13,7 @@ interface Props {
   isDemo?: boolean;
 }
   
-export default function BoardTaskButtons({ task, disabled }: Props) {
+export default function BoardTaskButtons({ task, disabled, isDemo }: Props) {
   const { board } = useAppSelector((state) => state.board);
   const dispatch = useAppDispatch();
   
@@ -26,13 +26,21 @@ export default function BoardTaskButtons({ task, disabled }: Props) {
     e.preventDefault();
     if (!task) return;
 
-    const wsParams: IWebSocketParams = { task_id: task.task_id };
+    if (isDemo) {
+      dispatch({
+        type: 'TASK_DELETE',
+        column_id: task.column,
+        task_index: task.task_index,
+      });
+    } else {
+      const wsParams: IWebSocketParams = { task_id: task.task_id };
 
-    dispatch({
-      type: 'START_WS_COMMAND',
-      wsCommand: BoardCommands.DELETE_TASK,
-      wsParams,
-    });
+      dispatch({
+        type: 'START_WS_COMMAND',
+        wsCommand: BoardCommands.DELETE_TASK,
+        wsParams,
+      });
+    }
   };
 
   const handleMove = (e: MouseEvent<HTMLButtonElement>, column_id: number) => {
