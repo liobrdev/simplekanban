@@ -53,6 +53,7 @@ export default function BoardTaskButtons({ task, disabled, isDemo }: Props) {
         column_id, board.tasks,
       );
       dispatch({ type: 'SUCCESS_SAVE_TASKS', tasks });
+      dispatch({ type: 'TASK_FORM_CLOSE' });
     } else {
       const wsParams: IWebSocketParams = {
         task_id: task.task_id,
