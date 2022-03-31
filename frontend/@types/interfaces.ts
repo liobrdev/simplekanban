@@ -210,6 +210,7 @@ export interface IBoardState {
   boardModal?: IModal;
   userRole?: 1 | 2 | 3;
   willLoginFromDemo: boolean;
+  taskScrollIntoView: string;
 }
 
 export interface IDashboardState {

@@ -22,6 +22,7 @@ export const initialBoardState: IBoardState = {
   taskForm: undefined,
   userRole: undefined,
   willLoginFromDemo: false,
+  taskScrollIntoView: '',
 };
 
 export const boardReducer = (
@@ -508,6 +509,9 @@ export const boardReducer = (
           taskForm: undefined,
         };
       } else return state;
+
+    case 'TASK_SCROLL_INTO_VIEW':
+      return { ...state, taskScrollIntoView: '' + action.task_id };
 
     case 'BOARD_MODAL_SHOW':
       return { ...state, boardModal: { ...action.boardModal } };

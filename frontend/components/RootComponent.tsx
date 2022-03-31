@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import Head from 'next/head';
 
-import { AppState } from '@/types';
+import { AppDispatch, AppState } from '@/types';
 
 import { LogoutUser, RetrieveUser } from './';
 
@@ -19,6 +19,16 @@ class RootComponent extends Component<Props> {
   componentDidMount() {
     window.addEventListener('resize', this.setAppHeight);
     this.setAppHeight();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.taskScrollIntoView && !prevProps.taskScrollIntoView) {
+      const taskItem = document.querySelector(
+        `[data-rbd-draggable-id="${this.props.taskScrollIntoView}"]`
+      );
+      taskItem?.scrollIntoView();
+      this.props.scrollTaskIntoView('');
+    }
   }
 
   componentWillUnmount() {
@@ -81,9 +91,16 @@ class RootComponent extends Component<Props> {
 
 const mapStateToProps = (state: AppState) => ({
   user: state.user.user,
+  taskScrollIntoView: state.board.taskScrollIntoView,
 });
 
-const connector = connect(mapStateToProps);
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+  scrollTaskIntoView: (task_id: string | number) => {
+    dispatch({ type: 'TASK_SCROLL_INTO_VIEW', task_id });
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 

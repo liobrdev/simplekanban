@@ -16,7 +16,7 @@ interface Props {
 export default function BoardTaskButtons({ task, disabled, isDemo }: Props) {
   const { board } = useAppSelector((state) => state.board);
   const dispatch = useAppDispatch();
-  
+
   const {
     leftColumn,
     rightColumn,
@@ -67,6 +67,8 @@ export default function BoardTaskButtons({ task, disabled, isDemo }: Props) {
         wsParams,
       });
     }
+
+    dispatch({ type: 'TASK_SCROLL_INTO_VIEW', task_id: task.task_id });
   };
 
   const buttonMoveTaskLeft = task && leftColumn ? (

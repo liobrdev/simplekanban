@@ -35,6 +35,7 @@ export default function BoardListColumns({ isDemo }: Props) {
 
     dispatch({ type: 'SUCCESS_SAVE_TASKS', tasks });
     dispatch({ type: 'TASK_FORM_CLOSE' });
+    dispatch({ type: 'TASK_SCROLL_INTO_VIEW', task_id: draggableId });
 
     if (isDemo) return;
 
