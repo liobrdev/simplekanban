@@ -108,14 +108,16 @@
     position: absolute;
     top: 9px;
     right: 10px;
+    width: max-content;
     background-color: $red;
     outline: none;
     border: none;
     padding: 6px 10px;
     border-radius: 4px;
     box-shadow: 1px 2px 2px 2px rgba(0, 0, 0, 0.1);
+    font-family: $fontSecondary;
     font-size: 18px;
-    font-weight: 300;
+    font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: white;
@@ -620,11 +622,6 @@
             -o-transition: all 0.1s linear;
                 transition: all 0.1s linear;
 
-        // @include for-tablet-landscape-up {
-        //   right: 50px;
-        //   bottom: 50px;
-        // }
-
         &-overlay {
           position: fixed;
           background: black;
@@ -783,6 +780,9 @@
     width: 100%;
 
     .BoardOptions-button {
+      z-index: 6;
+      position: relative;
+      display: inline-block;
       margin-top: 10px;
       margin-bottom: 10px;
       padding-left: 10px;
@@ -792,6 +792,8 @@
       width: 61.8%;
 
       .BoardOptions-button {
+        z-index: unset;
+        display: block;
         text-align: right;
         padding-right: 10px;
       }
