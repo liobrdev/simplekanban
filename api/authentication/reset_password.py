@@ -46,12 +46,8 @@ def send_reset_password_email(email, token_string, device_name, browser_name):
     plain_message = strip_tags(html_message)
 
     send_mail(
-        'Reset password for SimpleKanban account',
-        plain_message,
-        'support@simplekanban.app',
-        [email],
-        html_message=html_message,
-    )
+        'Reset password for SimpleKanban account', plain_message,
+        'support@simplekanban.app', [email], html_message=html_message,)
 
 
 def check_reset_token(email, token_string):
@@ -60,7 +56,7 @@ def check_reset_token(email, token_string):
             reset_token.delete()
             continue
         try:
-            digest = hash_token(token_string, reset_token.salt)
+            digest = hash_token(token_string)
         except (TypeError, binascii.Error):
             continue
         if compare_digest(digest, reset_token.digest):

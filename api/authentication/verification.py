@@ -52,7 +52,7 @@ def check_verification_token(command, user, token_string):
             token.delete()
             continue
         try:
-            digest = hash_token(token_string, token.salt)
+            digest = hash_token(token_string)
         except (TypeError, binascii.Error):
             continue
         if compare_digest(digest, token.digest):

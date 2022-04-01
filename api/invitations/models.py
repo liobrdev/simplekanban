@@ -1,7 +1,6 @@
 from django.db.models import (
     Model, CharField, DateTimeField, EmailField,
-    ForeignKey, Manager, UniqueConstraint, CASCADE,
-)
+    ForeignKey, Manager, UniqueConstraint, CASCADE,)
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -27,7 +26,6 @@ class EmptyToken:
     invitation = None
     digest = None
     token_key = None
-    salt = None
     created = None
     expiry = None
 
@@ -38,15 +36,9 @@ class EmptyToken:
 
 class Invitation(CustomBaseMixin):
     board = ForeignKey(
-        Board,
-        on_delete=CASCADE,
-        related_name='invitations',
-        editable=False,)
+        Board, on_delete=CASCADE, related_name='invitations', editable=False,)
     email = EmailField(
-        _('email invited'),
-        blank=False,
-        null=False,
-        editable=False,)
+        _('email invited'), blank=False, null=False, editable=False,)
 
     class Meta:
         constraints = [
@@ -65,30 +57,22 @@ class Invitation(CustomBaseMixin):
 class InviteTokenManager(Manager):
     def create(self, invitation, expiry):
         token = crypto.create_token_string()
-        salt = crypto.create_salt_string()
-        digest = crypto.hash_token(token, salt)
+        digest = crypto.hash_token(token)
         expiry = timezone.now() + expiry
 
         instance = super(InviteTokenManager, self).create(
             token_key=token[:CONSTANTS.TOKEN_KEY_LENGTH], digest=digest,
-            salt=salt, invitation=invitation, expiry=expiry)
+            invitation=invitation, expiry=expiry,)
+
         return instance, token
 
 
 class InviteToken(Model):
     invitation = ForeignKey(
-        Invitation,
-        null=False,
-        blank=False,
-        related_name='tokens',
-        on_delete=CASCADE,
-    )
-    digest = CharField(
-        max_length=CONSTANTS.DIGEST_LENGTH, primary_key=True)
-    token_key = CharField(
-        max_length=CONSTANTS.TOKEN_KEY_LENGTH, db_index=True)
-    salt = CharField(
-        max_length=CONSTANTS.SALT_LENGTH, unique=True)
+        Invitation, null=False, blank=False, related_name='tokens',
+        on_delete=CASCADE,)
+    digest = CharField(max_length=CONSTANTS.DIGEST_LENGTH, primary_key=True)
+    token_key = CharField(max_length=CONSTANTS.TOKEN_KEY_LENGTH, db_index=True)
     created = DateTimeField(auto_now_add=True)
     expiry = DateTimeField(null=True, blank=True)
 

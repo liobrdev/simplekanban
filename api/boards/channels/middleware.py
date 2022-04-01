@@ -110,7 +110,7 @@ class TokenMiddlewareInstance(TokenAuthentication):
             if self._cleanup_invite_token(invite_token):
                 continue
             try:
-                digest = hash_token(token_string, invite_token.salt)
+                digest = hash_token(token_string)
             except (TypeError, binascii.Error):
                 continue
             if compare_digest(digest, invite_token.digest):                    
