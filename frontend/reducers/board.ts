@@ -21,7 +21,8 @@ export const initialBoardState: IBoardState = {
   roleForm: undefined,
   taskForm: undefined,
   userRole: undefined,
-  willLoginFromDemo: false,
+  toLoginFromDemo: false,
+  isSubmittingDemo: false,
   taskScrollIntoView: '',
 };
 
@@ -37,11 +38,11 @@ export const boardReducer = (
         return {
           ...initialBoardState,
           board: {
-            board_slug: 'board_demo',
+            board_slug: 'demo',
             board_title: 'New kanban board',
             activity_logs: [],
             columns: [{
-              board: 'board_demo',
+              board: 'demo',
               column_id: 1234567890,
               column_title: 'To do',
               column_index: 0,
@@ -49,7 +50,7 @@ export const boardReducer = (
               wip_limit: 5,
               updated_at: '',
             }, {
-              board: 'board_demo',
+              board: 'demo',
               column_id: crypto.getRandomValues(new Uint32Array(1))[0],
               column_title: 'Doing',
               column_index: 1,
@@ -57,7 +58,7 @@ export const boardReducer = (
               wip_limit: 3,
               updated_at: '',
             }, {
-              board: 'board_demo',
+              board: 'demo',
               column_id: crypto.getRandomValues(new Uint32Array(1))[0],
               column_title: 'Done',
               column_index: 2,
@@ -68,7 +69,7 @@ export const boardReducer = (
             memberships: [],
             messages: [],
             tasks: [{
-              board: 'board_demo',
+              board: 'demo',
               column: 1234567890,
               task_id: crypto.getRandomValues(new Uint32Array(1))[0],
               task_index: 0,
@@ -271,7 +272,7 @@ export const boardReducer = (
             columns: [
               ...state.board.columns,
               {
-                board: 'board_demo',
+                board: 'demo',
                 column_id: crypto.getRandomValues(new Uint32Array(1))[0],
                 column_title: state.columnForm.column_title,
                 column_index: state.board.columns.length,
@@ -463,7 +464,7 @@ export const boardReducer = (
           board: {
             ...state.board,
             tasks: [...tasks, {
-              board: 'board_demo',
+              board: 'demo',
               column: column_id,
               task_id: crypto.getRandomValues(new Uint32Array(1))[0],
               task_index: tasks.filter(t => t.column === column_id).length,
@@ -535,8 +536,14 @@ export const boardReducer = (
         wsParams: {},
       };
 
-    case 'LOGIN_FROM_DEMO':
-      return { ...state, willLoginFromDemo: true };
+    case 'TO_LOGIN_FROM_DEMO':
+      return { ...state, toLoginFromDemo: action.value };
+
+    case 'START_SUBMIT_DEMO':
+      return { ...state, isSubmittingDemo: true };
+
+    case 'STOP_SUBMIT_DEMO':
+      return { ...state, isSubmittingDemo: false };
 
     case 'BOARD_RESET':
       return { ...initialBoardState };

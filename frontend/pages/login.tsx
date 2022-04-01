@@ -8,7 +8,13 @@ import Link from 'next/link';
 import { withRouter, NextRouter } from 'next/router';
 
 import { LeftArrowIcon, LoadingView, LoginForm } from '@/components';
-import { AppState, IBreadcrumbListItem } from '@/types';
+import {
+  AppDispatch,
+  AppState,
+  IBreadcrumbListItem,
+  checkListBoard,
+} from '@/types';
+import { request } from '@/utils';
 
 
 class Login extends Component<Props, State> {
@@ -19,21 +25,44 @@ class Login extends Component<Props, State> {
       token: '',
       email: '',
       email_token: '',
+      from: '',
       willLogIn: false,
     };
     this.handleBack = this.handleBack.bind(this);
+    this.handleSubmitDemo = this.handleSubmitDemo.bind(this);
   }
 
-  handleBack(e: MouseEvent<HTMLButtonElement>) {
+  handleBack(
+    e: MouseEvent<HTMLButtonElement>,
+    ...pathname: Parameters<NextRouter['push']>
+  ) {
     e.preventDefault();
-    this.props.router.push('/');
+    this.props.router.push(...pathname);
   };
+
+  async handleSubmitDemo() {
+    try {
+      this.props.startSubmitDemo();
+      const token = localStorage.getItem('simplekanban_token');
+      const board = await request
+        .post('/submit_demo/')
+        .set({ 'Authorization': `Token ${token}` })
+        .send({ ...this.props.board })
+        .then((res) => checkListBoard(res.body, res));
+      this.props.stopSubmitDemo();
+      this.props.router.replace(`/board/${board.board.board_slug}`);
+    } catch (err: any) {
+      this.props.stopSubmitDemo();
+      console.error(err);
+      this.props.router.replace('/dashboard');
+    }
+  }
 
   componentDidMount() {
     const { router, user } = this.props;
 
     if (!isEmpty(router.query)) {
-      const { board, token, email, email_token } = router.query;
+      const { board, token, email, email_token, from } = router.query;
 
       if (
         typeof board === 'string' &&
@@ -43,18 +72,20 @@ class Login extends Component<Props, State> {
         this.setState({ board, token, email });
       } else if (typeof email_token === 'string') {
         this.setState({ email_token });
+      } else if (typeof from === 'string') {
+        this.setState({ from });
       }
     }
 
     if (user) this.setState({ willLogIn: true });
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     const { router, user } = this.props;
 
     // If invitation query params are available, handle them
     if (isEmpty(prevProps.router.query) && !isEmpty(router.query)) {
-      const { board, token, email, email_token } = router.query;
+      const { board, token, email, email_token, from } = router.query;
 
       if (
         typeof board === 'string' &&
@@ -64,43 +95,43 @@ class Login extends Component<Props, State> {
         return this.setState({ board, token, email });
       } else if (typeof email_token === 'string') {
         return this.setState({ email_token });
+      } else if (typeof from === 'string') {
+        return this.setState({ from });
       }
     }
-    
-    // Once logged in
-    if (user) {
-      const { board, token, email, email_token } = this.state;
 
-      // If coming from invitation page
+    const { willLogIn } = this.state;
+
+    if ((user && !prevProps.user) || (willLogIn && !prevState.willLogIn)) {
+      const { board, token, email, email_token, from } = this.state;
+
       if (board && token && email) {
-        // Redirect back to invitation page while logged in
         router.replace(
           `/invitation?board=${board}&token=${token}&email=${email}`);
       } else if (email_token) {
-        // Redirect back to email verification page while logged in
         router.replace(`/verify_email?token=${email_token}`);
+      } else if (from === 'demo' && this.props.board?.board_slug === 'demo') {
+        this.handleSubmitDemo();
       } else {
-        // Otherwise redirect to dashboard
         router.replace('/dashboard');
       }
     }
   }
 
   render() {
-    const { router, user } = this.props;
-    const { board, token, email } = this.state;
+    const { user, isSubmittingDemo } = this.props;
+    const { board, token, email, from } = this.state;
 
     let headerText = 'Log in';
     let inviteEmail = '';
-    let inviteParams = '';
+    let params = '';
 
     if (board && token && email) {
       headerText = 'Log in to accept invitation';
-      inviteParams = `?board=${board}&token=${token}&email=${email}`;
-
-      if (typeof router.query.email === 'string') {
-        inviteEmail = decodeURIComponent(router.query.email);
-      }
+      params = `?board=${board}&token=${token}&email=${email}`;
+      inviteEmail = decodeURIComponent(email);
+    } else if (from) {
+      params = `?from=${from}`;
     }
 
     const breadcrumbList: IBreadcrumbListItem[] = [
@@ -124,7 +155,7 @@ class Login extends Component<Props, State> {
       "itemListElement": breadcrumbList
     });
     
-    return !!user ? <LoadingView /> : (
+    return !!user || isSubmittingDemo ? <LoadingView /> : (
       <>
         <Head>
           <title>Login - SimpleKanban</title>
@@ -133,17 +164,17 @@ class Login extends Component<Props, State> {
         <main className='Page Page--login'>
           <div className='LeftArrowIcon-container'>
             <LeftArrowIcon
-              onClick={this.handleBack}
+              onClick={e => this.handleBack(e, '/' + from)}
               src='/left-arrow-wh.png'
               type='button'
-              title='Back to home'
+              title='Back'
             />
           </div>
           <h2>{headerText}</h2>
           <LoginForm initial_email={inviteEmail} />
           <span className='LoginLink LoginLink--register'>
             Don&apos;t have an account?&nbsp;
-            <Link href={`/register${inviteParams}`}>
+            <Link href={`/register${params}`}>
               <a className='LoginLink-link'>
                 Sign up
               </a>
@@ -181,9 +212,20 @@ class Login extends Component<Props, State> {
 
 const mapStateToProps = (state: AppState) => ({
   user: state.user.user,
+  board: state.board.board,
+  isSubmittingDemo: state.board.isSubmittingDemo,
 });
 
-const connector = connect(mapStateToProps);
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+  startSubmitDemo: () => {
+    dispatch({ type: 'START_SUBMIT_DEMO' });
+  },
+  stopSubmitDemo: () => {
+    dispatch({ type: 'STOP_SUBMIT_DEMO' });
+  },
+})
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -196,6 +238,7 @@ interface State {
   token: string;
   email: string;
   email_token: string;
+  from: string;
   willLogIn: boolean;
 }
 

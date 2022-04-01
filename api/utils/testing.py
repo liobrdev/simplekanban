@@ -42,6 +42,58 @@ test_superuser = {
 }
 
 
+test_demo_board = {
+    'board_slug': 'demo',
+    'board_title': 'Demo board',
+    'columns': [
+        {
+            'board': 'demo',
+            'column_id': 1234567890,
+            'column_title': 'To do',
+            'column_index': 0,
+            'wip_limit_on': True,
+            'wip_limit': 5,
+            'updated_at': '',
+        },
+        {
+            'board': 'demo',
+            'column_id': 1234567891,
+            'column_title': 'Doing',
+            'column_index': 1,
+            'wip_limit_on': True,
+            'wip_limit': 3,
+            'updated_at': '',
+        },
+        {
+            'board': 'demo',
+            'column_id': 1234567892,
+            'column_title': 'Done',
+            'column_index': 2,
+            'wip_limit_on': False,
+            'wip_limit': 5,
+            'updated_at': '',
+        },
+    ],
+    'tasks': [
+        {
+            'board': 'demo',
+            'column': 1234567890,
+            'task_id': 9876543210,
+            'task_index': 0,
+            'text': 'First task - edit, move, or delete!',
+            'updated_at': '',
+        }
+    ],
+    'messages_allowed': False,
+    'new_members_allowed': False,
+    'activity_logs': [],
+    'memberships': [],
+    'messages': [],
+    'created_at': '',
+    'updated_at': '',
+}
+
+
 def create_user(data=test_user_1):
     return get_user_model().objects.create_user(**data)
 

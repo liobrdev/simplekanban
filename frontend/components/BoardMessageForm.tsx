@@ -44,7 +44,7 @@ export default function BoardMessageForm({ isDemo }: Props) {
     e.preventDefault();
     if (isDemo) {
       const message = 'Create an account to collaborate today!';
-      const action: IAction = { type: 'LOGIN_FROM_DEMO' };
+      const action: IAction = { type: 'TO_LOGIN_FROM_DEMO', value: true };
       const rightButton: IButton = { action, text: 'Sign up' };
       const boardModal: IModal = { page: 'board', message, rightButton };
       dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });

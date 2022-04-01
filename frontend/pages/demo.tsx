@@ -52,10 +52,21 @@ class Board extends Component<Props> {
     if (this.props.user && !prevProps.user) {
       this.props.router.replace('/dashboard');
     }
+
+    if (this.props.toLoginFromDemo && !prevProps.toLoginFromDemo) {
+      this.props.router.push('/register?from=demo');
+    }
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleEsc, false);
+    this.props.boardModalClose();
+    this.props.boardFormClose();
+    this.props.boardOptionsClose();
+    this.props.columnFormClose();
+    this.props.columnMenuClose();
+    this.props.taskFormClose();
+    this.props.loginFromDemo(false);
   }
 
   render() {
@@ -117,6 +128,7 @@ const mapStateToProps = (state: AppState) => ({
   board: state.board.board,
   boardForm: state.board.boardForm,
   boardModal: state.board.boardModal,
+  toLoginFromDemo: state.board.toLoginFromDemo,
   user: state.user.user,
 });
 
@@ -142,8 +154,8 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
   boardModalClose: () => {
     dispatch({ type: 'BOARD_MODAL_CLOSE' });
   },
-  boardReset: () => {
-    dispatch({ type: 'BOARD_RESET' });
+  loginFromDemo: (value: boolean) => {
+    dispatch({ type: 'TO_LOGIN_FROM_DEMO', value });
   },
 });
 

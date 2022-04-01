@@ -125,7 +125,7 @@ export default function BoardCreateColumn({ isDemo }: Props) {
             label='Task limit'
             type='number'
             name='wip_limit'
-            min={0}
+            min={1}
             value={columnForm?.wip_limit}
             onChange={handleInputWIP}
             disabled={buttonsDisabled || !columnForm?.wip_limit_on}

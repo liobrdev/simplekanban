@@ -1,5 +1,9 @@
+from django.db import transaction
+
+from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
-    ModelSerializer, BooleanField, PrimaryKeyRelatedField,)
+    ModelSerializer, Serializer, BooleanField, CharField, DictField, ListField,
+    PrimaryKeyRelatedField,)
 
 from boards.models import Board, BoardMembership, BoardMessage
 from activity_logs.models import ActivityLog
@@ -110,6 +114,93 @@ class ListBoardSerializer(ModelSerializer):
         model = BoardMembership
         fields = ['board', 'created_at']
         read_only_fields = ['board', 'created_at']
+
+
+class DemoSerializer(Serializer):
+    board_title = CharField(write_only=True, max_length=255)
+    columns = ListField(child=DictField(allow_empty=False), write_only=True)
+    tasks = ListField(child=DictField(allow_empty=False), write_only=True)
+
+    def validate_columns(self, columns: 'list[dict]'):
+        for column in columns:
+            try:
+                column_id = column['column_id']
+                column_title = column['column_title'].strip()
+                column_index = column['column_index']
+                wip_limit_on = column['wip_limit_on']
+                wip_limit = column['wip_limit']
+                column.pop('board')
+                column.pop('updated_at')
+
+                if not isinstance(column_id, int):
+                    raise TypeError('column_id')
+                if not column_title:
+                    raise ValueError('column_title cannot be empty')
+                if len(column_title) > 255:
+                    raise ValueError('column_title cannot be longer than 255 chars')
+                if not isinstance(column_index, int):
+                    raise ValueError('column_index')
+                if not isinstance(wip_limit_on, bool):
+                    raise TypeError('wip_limit_on')
+                if not isinstance(wip_limit, int):
+                    raise TypeError('wip_limit')
+                if not wip_limit:
+                    raise ValueError('wip_limit')
+            except (KeyError, AttributeError, TypeError, ValueError) as e:
+                raise ValidationError(f'Invalid column: {e.args[0]}')
+        return columns
+
+    def validate_tasks(self, tasks: 'list[dict]'):
+        for task in tasks:
+            try:
+                column = task['column']
+                text = task['text'].strip()
+                task_index = task['task_index']
+                task.pop('board')
+                task.pop('task_id')
+                task.pop('updated_at')
+
+                if not isinstance(column, int):
+                    raise TypeError('column')
+                if not column:
+                    raise ValueError('column')
+                if not text:
+                    raise ValueError('text cannot be empty')
+                if len(text) > 255:
+                    raise ValueError('text cannot be longer than 255 chars')
+                if not isinstance(task_index, int):
+                    raise ValueError('task_index')
+            except (KeyError, AttributeError, TypeError, ValueError) as e:
+                raise ValidationError(f'Invalid task: {e.args[0]}')
+        return tasks
+
+    def create(self, validated_data):
+        board_title = validated_data['board_title']
+        columns = validated_data['columns']
+        tasks = validated_data['tasks']
+        messages_allowed = validated_data['messages_allowed']
+        new_members_allowed = validated_data['new_members_allowed']
+
+        with transaction.atomic():
+            board = Board.objects.create(
+                board_title=board_title, messages_allowed=messages_allowed,
+                new_members_allowed=new_members_allowed,)
+
+            with transaction.atomic():
+                for c in columns:
+                    column = Column.objects.create(
+                        board=board, column_title=c['column_title'],
+                        column_index=c['column_index'],
+                        wip_limit=c['wip_limit'],
+                        wip_limit_on=c['wip_limit_on'],)
+
+                    for t in tasks:
+                        if t['column'] == c['column_id']:
+                            Task.objects.create(
+                                board=board, column=column, text=t['text'],
+                                task_index=t['task_index'],)
+
+            return board
         
 
 class BoardSerializer(ModelSerializer):

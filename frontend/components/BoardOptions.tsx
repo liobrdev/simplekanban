@@ -43,7 +43,7 @@ export default function BoardOptions({ isDemo, isHidden }: Props) {
   const handleSaveDemo = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const message = 'Create an account to save your work!';
-    const action: IAction = { type: 'LOGIN_FROM_DEMO' };
+    const action: IAction = { type: 'TO_LOGIN_FROM_DEMO', value: true };
     const rightButton: IButton = { action, text: 'Sign up' };
     const boardModal: IModal = { page: 'board', message, rightButton };
     dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });
@@ -53,7 +53,7 @@ export default function BoardOptions({ isDemo, isHidden }: Props) {
     e.preventDefault();
     if (isDemo) {
       const message = 'Create an account to collaborate today!';
-      const action: IAction = { type: 'LOGIN_FROM_DEMO' };
+      const action: IAction = { type: 'TO_LOGIN_FROM_DEMO', value: true };
       const rightButton: IButton = { action, text: 'Sign up' };
       const boardModal: IModal = { page: 'board', message, rightButton };
       dispatch({ type: 'BOARD_MODAL_SHOW', boardModal });

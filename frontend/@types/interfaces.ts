@@ -209,7 +209,8 @@ export interface IBoardState {
   taskForm?: ITaskForm;
   boardModal?: IModal;
   userRole?: 1 | 2 | 3;
-  willLoginFromDemo: boolean;
+  toLoginFromDemo: boolean;
+  isSubmittingDemo: boolean;
   taskScrollIntoView: string;
 }
 

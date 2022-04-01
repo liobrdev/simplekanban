@@ -68,7 +68,7 @@ export default function BoardColumnOptions(props: Props) {
           label='Task limit'
           type='number'
           name='wip_limit'
-          min={0}
+          min={1}
           value={columnMenu?.wip_limit}
           onChange={handleInput}
           disabled={props.disabled || !columnMenu?.wip_limit_on}

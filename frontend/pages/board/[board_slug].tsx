@@ -285,6 +285,7 @@ class Board extends Component<Props> {
 
   componentDidMount() {
     this.setTimeoutCheckUser();
+    this.props.startReadBoard();
     if (!isEmpty(this.props.router.query) && this.props.ip) this.setUpRws();
     window.addEventListener('keydown', this.handleEsc, false);
   }
@@ -365,7 +366,7 @@ class Board extends Component<Props> {
           <meta name='robots' content='noindex, nofollow' />
         </Head>
         {!!slug && <BoardRetrieveBoard slug={slug} />}
-        {isLoading ? <LoadingView className='LoadingView--dashboard' /> : (
+        {isLoading ? <LoadingView className='LoadingView--board' /> : (
           <main className='Page Page--board'>
             {!!boardModal && <Modal modal={boardModal} />}
             <div className={`LeftArrowIcon-container${

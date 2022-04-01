@@ -31,3 +31,4 @@ class BoardCommands(TextChoices):
     LEAVE = 'leave_board'
     INVITE = 'invite_member'
     NO_COMMAND = 'no_command'
+    SUBMIT_DEMO = 'submit_demo'
