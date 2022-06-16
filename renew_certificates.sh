@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -o pipefail -e
+set -eo pipefail
 
 HOME=/home/ubuntu
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -18,3 +18,6 @@ if docker-compose run --rm -T certbot renew > /dev/null
 then
   echo "Successful certificate renewal."
 fi
+
+systemctl reboot
+sleep 90
